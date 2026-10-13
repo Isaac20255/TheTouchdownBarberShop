@@ -1,0 +1,15 @@
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\bin\Debug\net9.0\TheTouchdownBarberShop.Application.deps.json
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\bin\Debug\net9.0\TheTouchdownBarberShop.Application.dll
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\bin\Debug\net9.0\TheTouchdownBarberShop.Application.pdb
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\bin\Debug\net9.0\TheTouchdownBarberShop.Infraestructure.dll
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\bin\Debug\net9.0\TheTouchdownBarberShop.Infraestructure.pdb
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\TheTouchdownBarberShop.Application.csproj.AssemblyReference.cache
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\TheTouchdownBarberShop.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\TheTouchdownBarberShop.Application.AssemblyInfoInputs.cache
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\TheTouchdownBarberShop.Application.AssemblyInfo.cs
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\TheTouchdownBarberShop.Application.csproj.CoreCompileInputs.cache
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\TheTouch.31BADEF3.Up2Date
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\TheTouchdownBarberShop.Application.dll
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\refint\TheTouchdownBarberShop.Application.dll
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\TheTouchdownBarberShop.Application.pdb
+C:\Users\isaac\source\repos\appTheTouchdownBarberShop\TheTouchdownBarberShop.Application\obj\Debug\net9.0\ref\TheTouchdownBarberShop.Application.dll
