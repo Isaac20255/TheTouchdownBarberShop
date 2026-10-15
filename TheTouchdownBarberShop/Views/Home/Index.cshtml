@@ -1,8 +1,66 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section con paleta Azul, Rojo, Blanco y Gris y el Logo incluido -->
+<div class="rounded-3 py-5 px-4 my-4 text-center shadow-lg position-relative overflow-hidden"
+     style="background: linear-gradient(rgba(13, 110, 253, 0.85), rgba(33, 37, 41, 0.9)), url('./images/slide-1.jpg') center/cover no-repeat; border-bottom: 4px solid #dc3545;">
+    <div class="col-lg-8 mx-auto text-white">
+
+       
+        <!-- Badge Rojo -->
+        <span class="badge bg-danger text-uppercase px-3 py-2 mb-3 shadow-sm">Estilo & Tradición</span>
+
+        <!-- Título Blanco -->
+        <h1 class="display-4 fw-bold text-white mb-3">The Touchdown Barber Shop</h1>
+
+        <!-- Subtítulo Claro -->
+        <p class="lead text-light mb-4 fs-5">
+            El lugar donde tu estilo toma la delantera. Barbería profesional, cortes clásicos, perfilado de barba y la mejor atención.
+        </p>
+
+        <!-- Botones -->
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a asp-controller="Cita" asp-action="Index" class="btn btn-danger btn-lg px-4 me-sm-3 fw-bold shadow">
+                <i class="bi bi-calendar-check me-2"></i>Agendar Cita
+            </a>
+            <a asp-controller="Servicio" asp-action="Index" class="btn btn-outline-light btn-lg px-4 shadow">
+                <i class="bi bi-scissors me-2"></i>Ver Servicios
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Tarjetas de Acceso Rápido -->
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+    <div class="col">
+        <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-3" style="border-top: 3px solid #0d6efd !important;">
+            <div class="card-body">
+                <i class="bi bi-scissors fs-1 text-primary mb-3"></i>
+                <h5 class="card-title text-dark fw-bold">Servicios</h5>
+                <p class="card-text text-muted">Conoce nuestros cortes, arreglos de barba y tratamientos faciales.</p>
+                <a asp-controller="Servicio" asp-action="Index" class="btn btn-sm btn-outline-primary">Ver catálogo</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-3" style="border-top: 3px solid #dc3545 !important;">
+            <div class="card-body">
+                <i class="bi bi-shop fs-1 text-danger mb-3"></i>
+                <h5 class="card-title text-dark fw-bold">Productos</h5>
+                <p class="card-text text-muted">Ceras, aceites y productos para el cuidado personal de alta calidad.</p>
+                <a asp-controller="Producto" asp-action="Index" class="btn btn-sm btn-outline-danger">Ver productos</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-3" style="border-top: 3px solid #0d6efd !important;">
+            <div class="card-body">
+                <i class="bi bi-clock-history fs-1 text-primary mb-3"></i>
+                <h5 class="card-title text-dark fw-bold">Reserva Rápida</h5>
+                <p class="card-text text-muted">Selecciona la hora que mejor te acomode y asegura tu espacio.</p>
+                <a asp-controller="Cita" asp-action="Index" class="btn btn-sm btn-primary">Reservar ahora</a>
+            </div>
+        </div>
+    </div>
 </div>

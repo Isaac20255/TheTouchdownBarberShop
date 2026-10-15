@@ -42,30 +42,23 @@ namespace TheTouchdownBarberShop.Infraestructure.Repository.Implementations
             _context = context;
         }
 
-        public async Task<Productos?> FindByIdAsync(int id)
-        {
-            // SELECT TOP 1 ... FROM productos p
-            // INNER JOIN categorias_productos c ON ... WHERE p.id_producto = @id AND p.activo = 1
-            var producto = await _context.Set<Productos>()
-                .Include(p => p.IdCategoriaProductoNavigation)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.IdProducto == id && p.Activo == true);
-
-            return producto;
-        }
-
         public async Task<ICollection<Productos>> ListAsync()
         {
-            // SELECT * FROM productos p
-            // INNER JOIN categorias_productos c ON ... WHERE p.activo = 1 ORDER BY p.nombre
-            var collection = await _context.Set<Productos>()
-                .Include(p => p.IdCategoriaProductoNavigation)
+            return await _context.Set<Productos>()
                 .AsNoTracking()
-                .Where(p => p.Activo == true)
-                .OrderBy(p => p.Nombre)
+                .Include(p => p.IdCategoriaProductoNavigation)
+                .Where(p => p.Activo)
+                .OrderBy(p => p.IdProducto)
                 .ToListAsync();
+        }
 
-            return collection;
+        public async Task<Productos?> FindByIdAsync(int id)
+        {
+            return await _context.Set<Productos>()
+                .AsNoTracking()
+                .Include(p => p.IdCategoriaProductoNavigation)
+                .Where(p => p.IdProducto == id && p.Activo)
+                .FirstOrDefaultAsync();
         }
     }
 }

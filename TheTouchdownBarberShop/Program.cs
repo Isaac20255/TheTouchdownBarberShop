@@ -18,13 +18,18 @@ builder.Services.AddControllersWithViews();
 // Configurar D.I.
 // Repository
 builder.Services.AddTransient<IRepositoryProducto, RepositoryProducto>();
+builder.Services.AddTransient<IRepositoryFactura, RepositoryFactura>();
+
+
 // Services
 builder.Services.AddTransient<IServiceProducto, ServiceProducto>();
+builder.Services.AddTransient<IServiceFactura, ServiceFactura>();
 
 // Configurar Automapper
 builder.Services.AddAutoMapper(config =>
 {
     config.AddProfile<ProductoProfile>();
+    config.AddProfile<FacturaProfile>();
 });
 
 // Configurar Conexión a la Base de Datos SQL 

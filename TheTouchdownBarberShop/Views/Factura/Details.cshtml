@@ -1,0 +1,98 @@
+﻿@model TheTouchdownBarberShop.Application.DTO.FacturaDTO
+
+@{
+    ViewData["Title"] = $"Factura #{Model.IdFactura}";
+}
+
+<!-- Header principal -->
+<div class="rounded-3 py-4 px-4 my-4 shadow-lg position-relative overflow-hidden"
+     style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
+    <div class="container text-white py-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Detalle</span>
+            <h1 class="display-6 fw-bold text-white mb-0">
+                <i class="bi bi-receipt me-2"></i>@ViewData["Title"]
+            </h1>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-light shadow">
+            <i class="bi bi-arrow-left me-1"></i>Volver al historial
+        </a>
+    </div>
+</div>
+
+<!-- Datos generales -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #0d6efd !important;">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <small class="text-muted d-block">Fecha de emisión</small>
+                <span class="fw-bold">@Model.FechaEmision.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Cliente</small>
+                <span class="fw-bold">@Model.ClienteNombre</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Método de pago</small>
+                <span class="fw-bold">@Model.MetodoPagoNombre</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Cita asociada</small>
+                <span class="fw-bold">@(Model.IdCita.HasValue ? $"#{Model.IdCita}" : "Sin cita")</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Productos / adicionales -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #dc3545 !important;">
+    <div class="card-body">
+        <h5 class="fw-bold text-dark mb-3">Productos y adicionales</h5>
+
+        @if (Model.FacturaProductos.Any())
+        {
+            <table class="table table-striped align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th class="text-end">Cantidad</th>
+                        <th class="text-end">Precio unitario</th>
+                        <th class="text-end">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var linea in Model.FacturaProductos)
+                    {
+                        <tr>
+                            <td>@linea.ProductoNombre</td>
+                            <td class="text-end">@linea.Cantidad</td>
+                            <td class="text-end">₡@linea.PrecioUnitario.ToString("N2")</td>
+                            <td class="text-end">₡@linea.Subtotal.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted mb-0">Esta factura no tiene productos adicionales.</p>
+        }
+    </div>
+</div>
+
+<!-- Totales -->
+<div class="row justify-content-end mb-5">
+    <div class="col-md-4">
+        <ul class="list-group shadow-sm">
+            <li class="list-group-item d-flex justify-content-between">
+                <span>Subtotal</span><span>₡@Model.Subtotal.ToString("N2")</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span>Impuesto</span><span>₡@Model.Impuesto.ToString("N2")</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between fw-bold fs-5">
+                <span>Total</span><span class="text-primary">₡@Model.Total.ToString("N2")</span>
+            </li>
+        </ul>
+    </div>
+</div>

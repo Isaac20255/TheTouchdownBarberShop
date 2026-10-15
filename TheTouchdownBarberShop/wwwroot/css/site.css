@@ -20,3 +20,76 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+:root {
+    --tb-card-bg: #1c1c1e;
+    --tb-card-footer-bg: #151516;
+    --tb-card-border: #3a3a3c;
+    --tb-accent: #c9a227;
+    --tb-accent-hover: #e0b93a;
+    --tb-muted: #a1a1a6;
+}
+
+/* Encabezado de página */
+.tb-header {
+    background: linear-gradient(135deg, #0f0f10, #2a2a2d);
+    border-bottom: 4px solid var(--tb-accent);
+}
+
+/* Tarjetas */
+.tb-card {
+    background-color: var(--tb-card-bg);
+    color: #fff;
+    border: 1px solid var(--tb-card-border);
+    border-top: 3px solid var(--tb-accent);
+}
+
+    .tb-card .card-footer {
+        background-color: var(--tb-card-footer-bg);
+        border-top: 1px solid var(--tb-card-border);
+    }
+
+    .tb-card .list-group-item {
+        background-color: transparent;
+        color: #fff;
+        border-color: var(--tb-card-border);
+    }
+
+.tb-muted {
+    color: var(--tb-muted);
+}
+
+.tb-price {
+    color: var(--tb-accent);
+}
+
+/* Etiqueta dorada (id, categoría) */
+.tb-badge {
+    background-color: var(--tb-accent);
+    color: #111;
+}
+
+/* Botón dorado sólido */
+.btn-tb {
+    background-color: var(--tb-accent);
+    border-color: var(--tb-accent);
+    color: #111;
+    font-weight: 600;
+}
+
+    .btn-tb:hover, .btn-tb:focus {
+        background-color: var(--tb-accent-hover);
+        border-color: var(--tb-accent-hover);
+        color: #111;
+    }
+
+/* Botón dorado con contorno */
+.btn-tb-outline {
+    border-color: var(--tb-accent);
+    color: var(--tb-accent);
+}
+
+    .btn-tb-outline:hover, .btn-tb-outline:focus {
+        background-color: var(--tb-accent);
+        color: #111;
+    }

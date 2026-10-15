@@ -1,0 +1,94 @@
+﻿@model TheTouchdownBarberShop.Application.DTOs.ProductoDTO
+
+@{
+    ViewData["Title"] = Model.Nombre;
+    var imagen = string.IsNullOrEmpty(Model.Imagen) ? "TheTouchdownBarberShopLogo.jpeg" : Model.Imagen;
+}
+
+<!-- Header -->
+<div class="rounded-3 py-4 px-4 my-4 shadow-lg position-relative overflow-hidden"
+     style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
+    <div class="container text-white py-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Detalle</span>
+            <h1 class="display-6 fw-bold text-white mb-0">
+                <i class="bi bi-box-seam me-2"></i>@Model.Nombre
+            </h1>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-light shadow">
+            <i class="bi bi-arrow-left me-1"></i>Volver al listado
+        </a>
+    </div>
+</div>
+
+<!-- Card de detalle -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-5 overflow-hidden"
+     style="border-top: 3px solid #0d6efd !important;">
+    <div class="row g-0">
+
+        <!-- Imagen -->
+        <div class="col-md-5 position-relative bg-white">
+            <img src="~/images/@imagen" class="w-100 h-100" alt="@Model.Nombre" style="object-fit: cover; min-height: 320px;">
+            <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded fw-bold shadow-sm">
+                #@Model.IdProducto
+            </span>
+        </div>
+
+        <!-- Información -->
+        <div class="col-md-7">
+            <div class="card-body p-4 d-flex flex-column h-100">
+                <h2 class="card-title text-dark fw-bold mb-1">@Model.Nombre</h2>
+                <p class="text-muted mb-3">
+                    <i class="bi bi-tag text-danger me-1"></i>@Model.CategoriaNombre
+                </p>
+
+                <p class="fs-3 fw-bold text-primary mb-3">₡@Model.Precio.ToString("N2")</p>
+
+                <p class="card-text text-dark mb-4">
+                    @(string.IsNullOrEmpty(Model.Descripcion) ? "Sin descripción disponible." : Model.Descripcion)
+                </p>
+
+                <ul class="list-group list-group-flush mb-4">
+                    <li class="list-group-item bg-transparent d-flex justify-content-between">
+                        <span class="text-muted">Marca</span>
+                        <span class="text-dark fw-semibold">@(string.IsNullOrEmpty(Model.Marca) ? "No especificada" : Model.Marca)</span>
+                    </li>
+                    <li class="list-group-item bg-transparent d-flex justify-content-between">
+                        <span class="text-muted">Presentación</span>
+                        <span class="text-dark fw-semibold">@(string.IsNullOrEmpty(Model.Presentacion) ? "No especificada" : Model.Presentacion)</span>
+                    </li>
+                    <li class="list-group-item bg-transparent d-flex justify-content-between">
+                        <span class="text-muted">Categoría</span>
+                        <span class="text-dark fw-semibold">@Model.CategoriaNombre</span>
+                    </li>
+                    <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Disponibilidad</span>
+                        @if (Model.Stock > 0)
+                        {
+                            <span class="badge bg-success">@Model.Stock unidades en stock</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Agotado</span>
+                        }
+                    </li>
+                    <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Estado</span>
+                        <span class="badge @(Model.Activo ? "bg-success" : "bg-secondary")">
+                            @(Model.Activo ? "Activo" : "Inactivo")
+                        </span>
+                    </li>
+                </ul>
+
+                <div class="mt-auto d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.IdProducto" class="btn btn-primary">
+                        <i class="bi bi-pencil-fill me-1"></i>Editar
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-list-ul me-1"></i>Listado
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

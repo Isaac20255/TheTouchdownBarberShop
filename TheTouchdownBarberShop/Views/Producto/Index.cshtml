@@ -1,0 +1,91 @@
+﻿@model IEnumerable<TheTouchdownBarberShop.Application.DTOs.ProductoDTO>
+
+@{
+    ViewData["Title"] = ViewBag.Titulo ?? "Catálogo de Productos";
+}
+
+<!-- Header principal -->
+<div class="rounded-3 py-4 px-4 my-4 shadow-lg position-relative overflow-hidden"
+     style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
+    <div class="container text-white py-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Mantenimiento</span>
+            <h1 class="display-6 fw-bold text-white mb-0">
+                <i class="bi bi-box-seam me-2"></i>@ViewData["Title"]
+            </h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-danger fw-bold shadow">
+                <i class="bi bi-plus-lg me-1"></i>Nuevo Producto
+            </a>
+            <a asp-controller="Producto" asp-action="Enviar" class="btn btn-outline-light shadow">
+                <i class="bi bi-send me-1"></i>Enviar
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Listado en Cards -->
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            var imagen = string.IsNullOrEmpty(item.Imagen) ? "TheTouchdownBarberShopLogo.jpeg" : item.Imagen;
+
+            <div class="col">
+                <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center overflow-hidden"
+                     style="border-top: 3px solid #0d6efd !important;">
+
+                    <!-- Imagen del Producto -->
+                    <div class="position-relative bg-white overflow-hidden" style="height: 200px;">
+                        <img src="~/images/@imagen" class="card-img-top w-100 h-100" alt="@item.Nombre" style="object-fit: cover;">
+                        <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded fw-bold shadow-sm">
+                            #@item.IdProducto
+                        </span>
+                    </div>
+
+                    <!-- Contenido -->
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-dark fw-bold mb-2">@item.Nombre</h5>
+                        <p class="card-text text-muted flex-grow-1">
+                            @(string.IsNullOrEmpty(item.Descripcion) ? "Sin descripción disponible." : item.Descripcion)
+                        </p>
+                        <div class="mb-2">
+                            <span class="fs-5 fw-bold text-primary">₡@item.Precio.ToString("N2")</span>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción (CRUD) -->
+                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between gap-1 p-2 pb-3">
+                        <a asp-action="Edit" asp-route-id="@item.IdProducto" class="btn btn-sm btn-outline-secondary flex-fill" title="Editar">
+                            <i class="bi bi-pencil-fill me-1"></i>Editar
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.IdProducto" class="btn btn-sm btn-outline-primary flex-fill" title="Detalles">
+                            <i class="bi bi-eye-fill me-1"></i>Ver
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.IdProducto" class="btn btn-sm btn-outline-danger flex-fill" title="Eliminar">
+                            <i class="bi bi-trash-fill me-1"></i>Borrar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-5"
+                 style="border-top: 3px solid #dc3545 !important;">
+                <i class="bi bi-inbox fs-1 text-danger mb-3"></i>
+                <h4 class="text-dark fw-bold">No hay productos registrados</h4>
+                <p class="text-muted mb-4">Aún no se han agregado productos a la lista.</p>
+                <div>
+                    <a asp-action="Create" class="btn btn-danger fw-bold">
+                        <i class="bi bi-plus-lg me-1"></i>Agregar Primer Producto
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

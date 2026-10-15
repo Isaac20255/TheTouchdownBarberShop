@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using TheTouchdownBarberShop.Models;
 using TheTouchdownBarberShop.Web.Models;
 
 namespace TheTouchdownBarberShop.Controllers

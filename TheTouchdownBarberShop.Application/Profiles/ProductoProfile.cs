@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using TheTouchdownBarberShop.Application.DTOs;
 using TheTouchdownBarberShop.Infraestructure.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TheTouchdownBarberShop.Application.Profiles
 {
@@ -13,7 +8,9 @@ namespace TheTouchdownBarberShop.Application.Profiles
     {
         public ProductoProfile()
         {
-            CreateMap<ProductoDTO, Productos>().ReverseMap();
+            CreateMap<Productos, ProductoDTO>()
+                .ForMember(dest => dest.CategoriaNombre,
+                           opt => opt.MapFrom(src => src.IdCategoriaProductoNavigation.Nombre));
         }
     }
 }

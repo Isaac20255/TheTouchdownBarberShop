@@ -1,6 +1,48 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Política de Privacidad";
+    Layout = "_LayoutCustom";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<!-- Encabezado estilo Hero con la paleta Azul, Rojo, Blanco y Gris -->
+<div class="rounded-3 py-4 px-4 my-4 shadow-lg position-relative overflow-hidden"
+     style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
+    <div class="container text-white py-2">
+        <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Información Legal</span>
+        <h1 class="display-5 fw-bold text-white mb-2">
+            <i class="bi bi-shield-check me-2"></i>@ViewData["Title"]
+        </h1>
+        <p class="lead text-light mb-0 fs-6">
+            En <strong>The Touchdown Barber Shop</strong> protegemos tus datos y garantizamos la confidencialidad de tu información personal.
+        </p>
+    </div>
+</div>
+
+<!-- Contenido Principal en tarjeta Gris con acento Azul -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm p-4 mb-5" style="border-top: 3px solid #0d6efd !important;">
+    <div class="card-body text-dark">
+        <h4 class="fw-bold mb-3 text-primary">
+            <i class="bi bi-lock-fill me-2 text-danger"></i>Uso de la Información
+        </h4>
+        <p class="text-muted">
+            Utilizamos tus datos únicamente para gestionar la programación de tus citas, procesar tus compras y brindarte una mejor experiencia en nuestras instalaciones.
+        </p>
+
+        <hr class="my-4 text-secondary">
+
+        <h4 class="fw-bold mb-3 text-primary">
+            <i class="bi bi-person-badge-fill me-2 text-danger"></i>Protección de Datos
+        </h4>
+        <p class="text-muted">
+            No compartimos tu información personal con terceros sin tu consentimiento. Todos tus datos de registro y reserva se almacenan de manera segura.
+        </p>
+
+        <div class="mt-4 pt-2">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary me-2">
+                <i class="bi bi-arrow-left me-1"></i> Volver al Inicio
+            </a>
+            <a asp-controller="Cita" asp-action="Index" class="btn btn-danger fw-bold">
+                <i class="bi bi-calendar-check me-1"></i> Agendar Cita
+            </a>
+        </div>
+    </div>
+</div>
