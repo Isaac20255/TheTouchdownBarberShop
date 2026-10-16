@@ -19,17 +19,21 @@ builder.Services.AddControllersWithViews();
 // Repository
 builder.Services.AddTransient<IRepositoryProducto, RepositoryProducto>();
 builder.Services.AddTransient<IRepositoryFactura, RepositoryFactura>();
+builder.Services.AddScoped<IRepositoryCita, RepositoryCita>();
+
 
 
 // Services
 builder.Services.AddTransient<IServiceProducto, ServiceProducto>();
 builder.Services.AddTransient<IServiceFactura, ServiceFactura>();
+builder.Services.AddScoped<IServiceCita, ServiceCita>();
 
 // Configurar Automapper
 builder.Services.AddAutoMapper(config =>
 {
     config.AddProfile<ProductoProfile>();
     config.AddProfile<FacturaProfile>();
+    config.AddProfile<CitaProfile>();
 });
 
 // Configurar Conexión a la Base de Datos SQL 
