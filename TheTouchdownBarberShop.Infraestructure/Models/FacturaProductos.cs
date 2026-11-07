@@ -19,5 +19,5 @@ public partial class FacturaProductos
 
     public virtual Facturas IdFacturaNavigation { get; set; } = null!;
 
-    public virtual Productos IdProductoNavigation { get; set; } = null!;
+    public virtual Producto IdProductoNavigation { get; set; } = null!;
 }

@@ -19,5 +19,5 @@ public partial class HistorialCitas
 
     public virtual Citas IdCitaNavigation { get; set; } = null!;
 
-    public virtual Usuarios IdUsuarioCambioNavigation { get; set; } = null!;
+    public virtual Usuario IdUsuarioCambioNavigation { get; set; } = null!;
 }

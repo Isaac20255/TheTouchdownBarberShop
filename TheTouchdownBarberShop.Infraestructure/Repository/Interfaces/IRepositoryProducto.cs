@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using TheTouchdownBarberShop.Infraestructure.Models;
 
 namespace TheTouchdownBarberShop.Infraestructure.Repository.Interfaces
 {
     public interface IRepositoryProducto
     {
-        Task<ICollection<Productos>> ListAsync();
-        Task<Productos?> FindByIdAsync(int id);
+        Task<ICollection<Producto>> ListAsync();
+        Task<Producto?> FindByIdAsync(int id);
+        Task<ICollection<CategoriasProductos>> ListCategoriasAsync();
+        Task AddAsync(Producto producto);
+        Task UpdateAsync(Producto producto);
+        Task DeleteAsync(int id);
     }
 }

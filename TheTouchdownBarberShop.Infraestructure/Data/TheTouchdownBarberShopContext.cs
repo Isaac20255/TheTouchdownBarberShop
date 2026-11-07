@@ -30,15 +30,13 @@ public partial class TheTouchdownBarberShopContext : DbContext
 
     public virtual DbSet<HistorialCitas> HistorialCitas { get; set; }
 
-    public virtual DbSet<HorariosBarberos> HorariosBarberos { get; set; }
-
     public virtual DbSet<MetodosPago> MetodosPago { get; set; }
 
     public virtual DbSet<PaqueteServicios> PaqueteServicios { get; set; }
 
     public virtual DbSet<Paquetes> Paquetes { get; set; }
 
-    public virtual DbSet<Productos> Productos { get; set; }
+    public virtual DbSet<Producto> Productos { get; set; }
 
     public virtual DbSet<Resenas> Resenas { get; set; }
 
@@ -46,9 +44,11 @@ public partial class TheTouchdownBarberShopContext : DbContext
 
     public virtual DbSet<Servicios> Servicios { get; set; }
 
-    public virtual DbSet<Sucursales> Sucursales { get; set; }
+    public virtual DbSet<Sucursal> Sucursales { get; set; }
 
-    public virtual DbSet<Usuarios> Usuarios { get; set; }
+    public virtual DbSet<Usuario> Usuarios { get; set; }
+
+    public virtual DbSet<HorariosSucursal> HorariosSucursals { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -83,6 +83,25 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("nombre");
             entity.Property(e => e.Obligatoria).HasColumnName("obligatoria");
+        });
+
+
+        modelBuilder.Entity<HorariosSucursal>(entity =>
+        {
+            entity.HasKey(e => e.IdHorarioSucursal);
+
+            entity.ToTable("horarios_sucursal");
+
+            entity.Property(e => e.IdHorarioSucursal).HasColumnName("id_horario_sucursal");
+            entity.Property(e => e.IdSucursal).HasColumnName("id_sucursal");
+            entity.Property(e => e.DiaSemana).HasMaxLength(15).HasColumnName("dia_semana");
+            entity.Property(e => e.HoraInicio).HasColumnName("hora_inicio");
+            entity.Property(e => e.HoraFin).HasColumnName("hora_fin");
+
+            entity.HasOne(d => d.IdSucursalNavigation).WithMany(p => p.HorariosSucursals)
+                .HasForeignKey(d => d.IdSucursal)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_horarios_sucursal_sucursales");
         });
 
         modelBuilder.Entity<CitaPreguntas>(entity =>
@@ -171,7 +190,8 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .HasForeignKey(d => d.IdPaquete)
                 .HasConstraintName("FK_citas_paquete");
 
-            entity.HasOne(d => d.IdSucursalNavigation).WithMany(p => p.Citas)
+            entity.HasOne(d => d.IdSucursalNavigation)
+                .WithMany()
                 .HasForeignKey(d => d.IdSucursal)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_citas_sucursales");
@@ -277,7 +297,8 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_facturas_metodos_pago");
 
-            entity.HasOne(d => d.IdSucursalNavigation).WithMany(p => p.Facturas)
+            entity.HasOne(d => d.IdSucursalNavigation)
+                .WithMany()
                 .HasForeignKey(d => d.IdSucursal)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_facturas_sucursales");
@@ -314,24 +335,7 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .HasConstraintName("FK_historial_usuarios");
         });
 
-        modelBuilder.Entity<HorariosBarberos>(entity =>
-        {
-            entity.HasKey(e => e.IdHorario).HasName("PK__horarios__C5836D695C172579");
-
-            entity.ToTable("horarios_barberos");
-
-            entity.Property(e => e.IdHorario).HasColumnName("id_horario");
-            entity.Property(e => e.DiaSemana)
-                .HasMaxLength(15)
-                .HasColumnName("dia_semana");
-            entity.Property(e => e.HoraFin).HasColumnName("hora_fin");
-            entity.Property(e => e.HoraInicio).HasColumnName("hora_inicio");
-            entity.Property(e => e.IdBarbero).HasColumnName("id_barbero");
-
-            entity.HasOne(d => d.IdBarberoNavigation).WithMany(p => p.HorariosBarberos)
-                .HasForeignKey(d => d.IdBarbero)
-                .HasConstraintName("FK_horarios_usuarios");
-        });
+       
 
         modelBuilder.Entity<MetodosPago>(entity =>
         {
@@ -394,7 +398,7 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .HasColumnName("precio_total");
         });
 
-        modelBuilder.Entity<Productos>(entity =>
+        modelBuilder.Entity<Producto>(entity =>
         {
             entity.HasKey(e => e.IdProducto).HasName("PK__producto__FF341C0D7A4211A3");
 
@@ -504,7 +508,7 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .HasConstraintName("FK_servicios_categorias");
         });
 
-        modelBuilder.Entity<Sucursales>(entity =>
+        modelBuilder.Entity<Sucursal>(entity =>
         {
             entity.HasKey(e => e.IdSucursal).HasName("PK__sucursal__4C75801382178F73");
 
@@ -526,9 +530,16 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("telefono");
+            entity.Property(e => e.AdministradorId)
+                .HasColumnName("id_administrador");
+
+            entity.HasOne(d => d.Administrador)
+                .WithMany()
+                .HasForeignKey(d => d.AdministradorId)
+                .HasConstraintName("FK_sucursales_usuarios");
         });
 
-        modelBuilder.Entity<Usuarios>(entity =>
+        modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(e => e.IdUsuario).HasName("PK__usuarios__4E3E04ADBC9DB1ED");
 
@@ -562,7 +573,8 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_usuarios_roles");
 
-            entity.HasOne(d => d.IdSucursalNavigation).WithMany(p => p.Usuarios)
+            entity.HasOne(d => d.IdSucursalNavigation)
+                .WithMany()
                 .HasForeignKey(d => d.IdSucursal)
                 .HasConstraintName("FK_usuarios_sucursales");
         });

@@ -31,13 +31,13 @@ public partial class Citas
 
     public virtual ICollection<HistorialCitas> HistorialCitas { get; set; } = new List<HistorialCitas>();
 
-    public virtual Usuarios? IdBarberoNavigation { get; set; }
+    public virtual Usuario? IdBarberoNavigation { get; set; }
 
-    public virtual Usuarios IdClienteNavigation { get; set; } = null!;
+    public virtual Usuario IdClienteNavigation { get; set; } = null!;
 
     public virtual Paquetes? IdPaqueteNavigation { get; set; }
 
-    public virtual Sucursales IdSucursalNavigation { get; set; } = null!;
+    public virtual Sucursal IdSucursalNavigation { get; set; } = null!;
 
     public virtual Resenas? Resenas { get; set; }
 }

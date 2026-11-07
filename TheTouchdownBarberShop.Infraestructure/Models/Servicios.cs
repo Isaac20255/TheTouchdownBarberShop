@@ -19,6 +19,8 @@ public partial class Servicios
 
     public bool Activo { get; set; }
 
+    public string? Imagen { get; set; }
+
     public virtual ICollection<CitaServicios> CitaServicios { get; set; } = new List<CitaServicios>();
 
     public virtual ICollection<FacturaServicios> FacturaServicios { get; set; } = new List<FacturaServicios>();

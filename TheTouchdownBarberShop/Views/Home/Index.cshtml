@@ -2,65 +2,375 @@
     ViewData["Title"] = "Inicio";
 }
 
-<!-- Hero Section con paleta Azul, Rojo, Blanco y Gris y el Logo incluido -->
-<div class="rounded-3 py-5 px-4 my-4 text-center shadow-lg position-relative overflow-hidden"
-     style="background: linear-gradient(rgba(13, 110, 253, 0.85), rgba(33, 37, 41, 0.9)), url('./images/slide-1.jpg') center/cover no-repeat; border-bottom: 4px solid #dc3545;">
-    <div class="col-lg-8 mx-auto text-white">
+<style>
+    .home-section {
+        margin-bottom: 90px;
+    }
 
-       
-        <!-- Badge Rojo -->
-        <span class="badge bg-danger text-uppercase px-3 py-2 mb-3 shadow-sm">Estilo & Tradición</span>
+    .home-section-title {
+        margin-bottom: 35px;
+    }
 
-        <!-- Título Blanco -->
-        <h1 class="display-4 fw-bold text-white mb-3">The Touchdown Barber Shop</h1>
+    .home-divider {
+        width: 85px;
+        height: 4px;
+        background: linear-gradient(90deg, #0d6efd, #dc3545);
+        border-radius: 10px;
+        margin: 18px auto 0;
+    }
 
-        <!-- Subtítulo Claro -->
-        <p class="lead text-light mb-4 fs-5">
-            El lugar donde tu estilo toma la delantera. Barbería profesional, cortes clásicos, perfilado de barba y la mejor atención.
+    .home-card {
+        transition: transform .3s ease, box-shadow .3s ease;
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+        .home-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 30px rgba(0,0,0,.15) !important;
+        }
+
+    .home-icon {
+        width: 78px;
+        height: 78px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        font-size: 35px;
+        margin-bottom: 20px;
+    }
+
+    .home-section-alt {
+        background-color: #f3f5f8;
+        border-radius: 20px;
+        padding: 55px 30px;
+    }
+
+    .home-hero {
+        background: linear-gradient( rgba(13,110,253,.85), rgba(33,37,41,.90) ), url('/images/slide-1.jpg') center/cover no-repeat;
+        border-bottom: 5px solid #dc3545;
+        border-radius: 20px;
+    }
+
+    <style >
+    @@media (max-width: 768px) {
+        .home-section
+
+    {
+        margin-bottom: 55px;
+    }
+
+    .home-section-alt {
+        padding: 35px 18px;
+    }
+
+    }
+</style>
+</style>
+
+<!-- HERO PRINCIPAL -->
+<section class="home-section" style="margin-top: 20px;">
+    <div class="home-hero text-center shadow-lg px-4 py-5">
+        <div class="col-lg-8 mx-auto text-white py-5">
+            <span class="badge bg-danger text-uppercase px-3 py-2 mb-3">
+                Estilo & Tradición
+            </span>
+            <h1 class="display-4 fw-bold text-white mb-4">
+                The Touchdown Barber Shop
+            </h1>
+            <p class="lead text-light mb-4 fs-5">
+                El lugar donde tu estilo toma la delantera.
+                Barbería profesional, cortes clásicos,
+                perfilado de barba y la mejor atención.
+            </p>
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                <a asp-controller="Cita"
+                   asp-action="Index"
+                   class="btn btn-danger btn-lg px-4 fw-bold shadow">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Agendar Cita
+                </a>
+                <a asp-controller="Servicio"
+                   asp-action="Index"
+                   class="btn btn-outline-light btn-lg px-4 shadow">
+                    <i class="bi bi-scissors me-2"></i>
+                    Ver Servicios
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ACCESOS RÁPIDOS -->
+<section class="home-section">
+    <div class="text-center home-section-title">
+        <span class="badge bg-primary px-3 py-2 mb-3">
+            EXPLORA
+        </span>
+        <h2 class="fw-bold text-dark">
+            Nuestros Servicios y Opciones
+        </h2>
+        <p class="text-muted">
+            Todo lo que necesitas para mantener tu mejor estilo.
         </p>
+        <div class="home-divider"></div>
+    </div>
 
-        <!-- Botones -->
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a asp-controller="Cita" asp-action="Index" class="btn btn-danger btn-lg px-4 me-sm-3 fw-bold shadow">
-                <i class="bi bi-calendar-check me-2"></i>Agendar Cita
-            </a>
-            <a asp-controller="Servicio" asp-action="Index" class="btn btn-outline-light btn-lg px-4 shadow">
-                <i class="bi bi-scissors me-2"></i>Ver Servicios
-            </a>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- SERVICIOS -->
+        <div class="col">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm text-center p-4"
+                 style="border-top: 4px solid #0d6efd !important;">
+                <div class="card-body">
+                    <div class="home-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-scissors"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">
+                        Servicios
+                    </h4>
+                    <p class="text-muted mb-4">
+                        Conoce nuestros cortes de cabello,
+                        perfilado de barba y tratamientos
+                        profesionales.
+                    </p>
+                    <a asp-controller="Servicio"
+                       asp-action="Index"
+                       class="btn btn-outline-primary fw-bold px-4">
+                        <i class="bi bi-list-ul me-2"></i>
+                        Ver Catálogo
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<!-- Tarjetas de Acceso Rápido -->
-<div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
-    <div class="col">
-        <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-3" style="border-top: 3px solid #0d6efd !important;">
-            <div class="card-body">
-                <i class="bi bi-scissors fs-1 text-primary mb-3"></i>
-                <h5 class="card-title text-dark fw-bold">Servicios</h5>
-                <p class="card-text text-muted">Conoce nuestros cortes, arreglos de barba y tratamientos faciales.</p>
-                <a asp-controller="Servicio" asp-action="Index" class="btn btn-sm btn-outline-primary">Ver catálogo</a>
+        <!-- PRODUCTOS -->
+        <div class="col">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm text-center p-4"
+                 style="border-top: 4px solid #dc3545 !important;">
+                <div class="card-body">
+                    <div class="home-icon bg-danger bg-opacity-10 text-danger">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">
+                        Productos
+                    </h4>
+                    <p class="text-muted mb-4">
+                        Descubre nuestras ceras, pomadas,
+                        aceites y productos profesionales
+                        para el cuidado personal.
+                    </p>
+                    <a asp-controller="Producto"
+                       asp-action="Index"
+                       class="btn btn-outline-danger fw-bold px-4">
+                        <i class="bi bi-bag me-2"></i>
+                        Ver Productos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESERVAS -->
+        <div class="col">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm text-center p-4"
+                 style="border-top: 4px solid #0d6efd !important;">
+                <div class="card-body">
+                    <div class="home-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">
+                        Reserva Rápida
+                    </h4>
+                    <p class="text-muted mb-4">
+                        Selecciona la fecha y hora que mejor
+                        se adapte a tu horario y asegura
+                        tu espacio con anticipación.
+                    </p>
+                    <a asp-controller="Cita"
+                       asp-action="Index"
+                       class="btn btn-primary fw-bold px-4">
+                        <i class="bi bi-calendar-plus me-2"></i>
+                        Reservar Ahora
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-3" style="border-top: 3px solid #dc3545 !important;">
-            <div class="card-body">
-                <i class="bi bi-shop fs-1 text-danger mb-3"></i>
-                <h5 class="card-title text-dark fw-bold">Productos</h5>
-                <p class="card-text text-muted">Ceras, aceites y productos para el cuidado personal de alta calidad.</p>
-                <a asp-controller="Producto" asp-action="Index" class="btn btn-sm btn-outline-danger">Ver productos</a>
+</section>
+
+<!-- POR QUÉ ELEGIRNOS -->
+<section class="home-section home-section-alt">
+    <div class="text-center home-section-title">
+        <span class="badge bg-danger px-3 py-2 mb-3">
+            EXCELENCIA
+        </span>
+        <h2 class="fw-bold text-dark">
+            ¿Por qué elegir The Touchdown?
+        </h2>
+        <p class="text-muted">
+            Combinamos el deporte y la barbería clásica
+            bajo un estándar superior.
+        </p>
+        <div class="home-divider"></div>
+    </div>
+
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm p-4">
+                <div class="card-body">
+                    <div class="home-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">
+                        Barbería Profesional
+                    </h4>
+                    <p class="text-muted mb-0">
+                        Especialistas en tendencias modernas,
+                        cortes clásicos, degradados perfectos
+                        y cuidado integral.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm p-4">
+                <div class="card-body">
+                    <div class="home-icon bg-danger bg-opacity-10 text-danger">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">
+                        Ambiente Temático
+                    </h4>
+                    <p class="text-muted mb-0">
+                        Disfruta de un espacio cómodo,
+                        ambientado con la temática deportiva
+                        que te apasiona.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm p-4">
+                <div class="card-body">
+                    <div class="home-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">
+                        Puntualidad y Confort
+                    </h4>
+                    <p class="text-muted mb-0">
+                        Respetamos tu tiempo con procesos
+                        optimizados, estaciones cómodas
+                        y un servicio excepcional.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-3" style="border-top: 3px solid #0d6efd !important;">
-            <div class="card-body">
-                <i class="bi bi-clock-history fs-1 text-primary mb-3"></i>
-                <h5 class="card-title text-dark fw-bold">Reserva Rápida</h5>
-                <p class="card-text text-muted">Selecciona la hora que mejor te acomode y asegura tu espacio.</p>
-                <a asp-controller="Cita" asp-action="Index" class="btn btn-sm btn-primary">Reservar ahora</a>
+</section>
+
+<!-- SOBRE NOSOTROS -->
+<section class="home-section">
+    <div class="card shadow-lg border-0 bg-white rounded-4 overflow-hidden"
+         style="border-top: 5px solid #0d6efd !important;">
+        <div class="row g-0 align-items-center">
+            <div class="col-lg-6 p-4 p-md-5">
+                <span class="badge bg-primary px-3 py-2 mb-3">
+                    SOBRE NOSOTROS
+                </span>
+                <h2 class="fw-bold text-dark mb-4">
+                    Más que una barbería,
+                    una comunidad
+                </h2>
+                <p class="text-muted mb-4">
+                    En <strong>The Touchdown Barber Shop</strong>
+                    unimos la pasión por el buen estilo y la precisión.
+                    Nuestro equipo está capacitado para brindarte
+                    asesoría personalizada, asegurando que salgas
+                    con una confianza renovada.
+                </p>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 border text-center">
+                            <h4 class="fw-bold text-primary">
+                                100%
+                            </h4>
+                            <span class="text-muted small">
+                                Compromiso y Estilo
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 border text-center">
+                            <h4 class="fw-bold text-danger">
+                                Top
+                            </h4>
+                            <span class="text-muted small">
+                                Atención Garantizada
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 bg-light p-5 text-center">
+                <div class="py-5">
+                    <i class="bi bi-shop display-1 text-primary mb-4 d-block"></i>
+                    <h4 class="fw-bold text-dark mb-3">
+                        Tu espacio de confianza
+                    </h4>
+                    <p class="text-muted">
+                        Ven y vive la experiencia única
+                        que tenemos preparada para cada cliente.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- SUCURSALES / CONTÁCTANOS -->
+<section id="contacto" class="home-section">
+    <div class="text-center home-section-title">
+        <span class="badge bg-danger px-3 py-2 mb-3">
+            UBICACIONES
+        </span>
+        <h2 class="fw-bold text-dark">
+            Nuestras Sucursales
+        </h2>
+        <div class="home-divider"></div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+        <div class="col">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm text-center p-4" style="border-top: 4px solid #0d6efd !important;">
+                <div class="card-body">
+                    <i class="bi bi-geo-alt-fill text-primary display-5 mb-3 d-block"></i>
+                    <h4 class="fw-bold text-dark mb-2">Touchdown Alajuela</h4>
+                    <p class="text-muted small mb-0">Centro de Alajuela, cerca de puntos clave y con la mejor atención deportiva.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm text-center p-4" style="border-top: 4px solid #dc3545 !important;">
+                <div class="card-body">
+                    <i class="bi bi-geo-alt-fill text-danger display-5 mb-3 d-block"></i>
+                    <h4 class="fw-bold text-dark mb-2">Touchdown Escazú</h4>
+                    <p class="text-muted small mb-0">Exclusiva sucursal en Escazú con confort y estilo de primer nivel.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card home-card h-100 bg-white border-0 shadow-sm text-center p-4" style="border-top: 4px solid #0d6efd !important;">
+                <div class="card-body">
+                    <i class="bi bi-geo-alt-fill text-primary display-5 mb-3 d-block"></i>
+                    <h4 class="fw-bold text-dark mb-2">Touchdown Heredia</h4>
+                    <p class="text-muted small mb-0">Ambiente moderno y dinámico ubicado en el corazón de Heredia.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+</section>

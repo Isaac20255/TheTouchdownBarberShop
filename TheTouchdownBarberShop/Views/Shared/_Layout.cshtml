@@ -9,27 +9,183 @@
     <link rel="stylesheet" href="~/TheTouchdownBarberShop.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!--SweetAlert-->
-    <link rel="stylesheet" href="~/css/sweetalert2.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        /* Estilo del Sidebar Vertical Fijo */
+        .vertical-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            background-color: #1D1F20;
+            color: #ffffff;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-right: 4px solid #0d6efd;
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #0d6efd;
+        }
+
+        .sidebar-menu {
+            padding: 20px 15px;
+            list-style: none;
+            margin: 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #adb5bd;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .sidebar-link:hover, .sidebar-link.active {
+                color: #ffffff;
+                background-color: #0d6efd;
+            }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        /* Contenedor principal ajustado al margen del sidebar */
+        .main-wrapper {
+            margin-left: 260px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        /* Responsivo para móviles corregido con @@media */
+        @@media (max-width: 992px) {
+            .vertical-sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 4px solid #0d6efd;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        @await Html.PartialAsync("_Menu")
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-    <footer class="border-top footer bg-dark text-light">
-        <div class="container">
-            &copy; 2026 - The Touchdown Barber Shop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Barra Lateral Vertical -->
+    <nav class="vertical-sidebar">
+        <div>
+            <a class="sidebar-brand" asp-controller="Home" asp-action="Index">
+                <img src="~/images/TheTouchdownBarberShopLogo.jpeg" alt="Logo" class="sidebar-logo" />
+                <span>Touchdown Barber</span>
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a class="sidebar-link" asp-controller="Home" asp-action="Index">
+                        <i class="bi bi-house-door-fill fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" asp-controller="Servicio" asp-action="Index">
+                        <i class="bi bi-scissors fs-5"></i> Servicios
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" asp-controller="Producto" asp-action="Index">
+                        <i class="bi bi-bag-fill fs-5"></i> Productos
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" asp-controller="Cita" asp-action="Index">
+                        <i class="bi bi-calendar-check-fill fs-5"></i> Citas
+                    </a>
+                </li>
+                
+                <li class="sidebar-item">
+                    <a class="sidebar-link" asp-controller="Sucursal" asp-action="Index">
+                        <i class="bi bi-shop fs-5"></i> Sucursales
+                    </a>
+
+            </ul>
         </div>
-    </footer>
+
+        <div class="sidebar-footer">
+            <span class="d-block text-light fw-bold">The Touchdown</span>
+            <span>Costa Rica</span>
+        </div>
+    </nav>
+
+    <!-- Envoltorio del Contenido Principal -->
+    <div class="main-wrapper">
+        <div class="main-content">
+            <div class="container-fluid">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+
+        <footer class="border-top footer bg-dark text-light py-3 text-center">
+            <div class="container">
+                &copy; 2026 - The Touchdown Barber Shop - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-light">Privacy</a>
+            </div>
+        </footer>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <!--SweetAlert-->
-    <script src="~/js/sweetalert2.all.min.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     @if (ViewBag.NotificationMessage != null)
     {
@@ -37,5 +193,33 @@
             @Html.Raw(@ViewBag.NotificationMessage);
         </script>
     }
+
+    @if (TempData["Mensaje"] != null)
+    {
+        var tipo = TempData["Tipo"]?.ToString() ?? "success";
+        var borderColor = tipo == "error" ? "#dc3545" : "#198754";
+        var iconClass = tipo == "error" ? "bi-x-circle-fill text-danger" : "bi-check-circle-fill text-success";
+
+        <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080; margin-top: 25px;">
+            <div id="liveToast" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" style="border-left: 5px solid @borderColor !important; min-width: 320px;">
+                <div class="d-flex p-3 align-items-center">
+                    <div class="toast-body d-flex align-items-center p-0 fs-6">
+                        <i class="bi @iconClass fs-4 me-3"></i>
+                        <span class="fw-medium">@TempData["Mensaje"]</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-auto me-0" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            window.addEventListener('DOMContentLoaded', (event) => {
+                var toastEl = document.getElementById('liveToast');
+                var toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+                toast.show();
+            });
+        </script>
+    }
+
 </body>
 </html>

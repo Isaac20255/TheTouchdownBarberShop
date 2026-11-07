@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿
+using AutoMapper;
 using TheTouchdownBarberShop.Application.DTOs;
 using TheTouchdownBarberShop.Infraestructure.Models;
 
@@ -8,9 +9,14 @@ namespace TheTouchdownBarberShop.Application.Profiles
     {
         public ProductoProfile()
         {
-            CreateMap<Productos, ProductoDTO>()
-                .ForMember(dest => dest.CategoriaNombre,
-                           opt => opt.MapFrom(src => src.IdCategoriaProductoNavigation.Nombre));
+            CreateMap<Producto, ProductoDTO>()
+       .ForMember(d => d.CategoriaNombre,
+           o => o.MapFrom(s => s.IdCategoriaProductoNavigation != null
+                               ? s.IdCategoriaProductoNavigation.Nombre
+                               : null));
+
+            CreateMap<ProductoDTO, Producto>()
+                .ForMember(d => d.IdCategoriaProductoNavigation, o => o.Ignore());
         }
     }
 }

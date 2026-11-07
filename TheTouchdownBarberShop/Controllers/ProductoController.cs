@@ -1,121 +1,169 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using TheTouchdownBarberShop.Application.DTOs;
 using TheTouchdownBarberShop.Application.Services.Interfaces;
 
-namespace TheTouchdownBarberShop.Controllers
+namespace TheTouchdownBarberShop.Web.Controllers
 {
     public class ProductoController : Controller
     {
-        private readonly IServiceProducto _serviceProducto;
+        private readonly IServiceProducto _service;
+        private readonly IWebHostEnvironment _env;
 
-        public ProductoController(IServiceProducto serviceProducto)
+        public ProductoController(IServiceProducto service, IWebHostEnvironment env)
         {
-            _serviceProducto = serviceProducto;
+            _service = service;
+            _env = env;
         }
 
-        // GET: /Producto
-        [HttpGet]
+        // GET: Producto
         public async Task<IActionResult> Index()
         {
-            // Recibir mensaje enviado desde otra acción mediante TempData
-            if (TempData.ContainsKey("Mensaje"))
-            {
-                ViewBag.NotificationMessage = TempData["Mensaje"];
-            }
-            ViewData["Title"] = "Productos";
-            ViewBag.Titulo = "Lista de Productos";
-
-            var collection = await _serviceProducto.ListAsync();
-            return View(collection);
+            var lista = await _service.ListAsync();
+            return View(lista);
         }
 
-        // GET: /Producto/Enviar
-        public IActionResult Enviar()
+        // GET: Producto/Details
+        public async Task<IActionResult> Details(int id)
         {
-            TempData["Mensaje"] = Web.Util.SweetAlertHelper.Mensaje("Enviar", "Mensaje enviado", Web.Util.SweetAlertMessageType.success);
-            return RedirectToAction("Index");
-        }
-
-        // GET: /Producto/Details/5
-        [HttpGet]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return BadRequest();
-            }
-
-            var producto = await _serviceProducto.FindByIdAsync(id.Value);
-
-            if (producto == null)
-            {
-                return NotFound();
-            }
-
+            var producto = await _service.FindByIdAsync(id);
+            if (producto == null) return NotFound();
             return View(producto);
         }
 
-        // GET: /Producto/Create
-        public IActionResult Create()
+        // GET: Producto/Create
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
-            return View();
+            ViewBag.Categorias = await _service.ListCategoriasAsync();
+            return View(new ProductoDTO { Activo = true });
         }
 
-        // POST: /Producto/Create
+        // POST: Producto/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(ProductoDTO dto)
+        {
+            ModelState.Remove("CategoriaNombre");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = await _service.ListCategoriasAsync();
+                return View(dto);
+            }
+
+            try
+            {
+                await _service.AddAsync(dto);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "No se pudo guardar el producto: " + (ex.InnerException?.Message ?? ex.Message));
+                ViewBag.Categorias = await _service.ListCategoriasAsync();
+                return View(dto);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Producto/Edit
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var producto = await _service.FindByIdAsync(id);
+            if (producto == null) return NotFound();
+
+            ViewBag.Categorias = await _service.ListCategoriasAsync();
+            return View(producto);
+        }
+
+        // POST: Producto/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ProductoDTO dto, IFormFile? imagenArchivo)
+        {
+            if (id != dto.IdProducto) return BadRequest();
+
+            ModelState.Remove("CategoriaNombre");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = await _service.ListCategoriasAsync();
+                return View(dto);
+            }
+
+            // Si se seleccionó una imagen nueva, se guarda y se reemplaza el nombre.
+            // Si no, dto.Imagen conserva el nombre actual que llega por el campo hidden.
+            if (imagenArchivo != null && imagenArchivo.Length > 0)
+            {
+                var extension = Path.GetExtension(imagenArchivo.FileName).ToLowerInvariant();
+
+                if (extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".webp")
+                {
+                    ModelState.AddModelError(string.Empty, "Formato de imagen no permitido. Use JPG, PNG o WEBP.");
+                    ViewBag.Categorias = await _service.ListCategoriasAsync();
+                    return View(dto);
+                }
+
+                var nombreArchivo = Guid.NewGuid() + extension;
+                var ruta = Path.Combine(_env.WebRootPath, "images", nombreArchivo);
+
+                using (var stream = new FileStream(ruta, FileMode.Create))
+                {
+                    await imagenArchivo.CopyToAsync(stream);
+                }
+
+                dto.Imagen = nombreArchivo;
+            }
+
+            try
+            {
+                await _service.UpdateAsync(dto);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "No se pudo actualizar el producto: " + (ex.InnerException?.Message ?? ex.Message));
+                ViewBag.Categorias = await _service.ListCategoriasAsync();
+                return View(dto);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Producto/Delete
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var producto = await _service.FindByIdAsync(id);
+            if (producto == null) return NotFound();
+            return View(producto);
+        }
+
+        // POST: Producto/Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _service.DeleteAsync(id);
             }
-            catch
+            catch (Exception)
             {
-                return View();
-            }
-        }
+                var producto = await _service.FindByIdAsync(id);
+                if (producto == null) return NotFound();
 
-        // GET: /Producto/Edit/5
-        public IActionResult Edit(int id)
-        {
-            return View();
-        }
+                ModelState.AddModelError(string.Empty,
+                    "No se puede eliminar el producto porque está asociado a una factura.");
+                return View(producto);
+            }
 
-        // POST: /Producto/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: /Producto/Delete/5
-        public IActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: /Producto/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -20,6 +20,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IRepositoryProducto, RepositoryProducto>();
 builder.Services.AddTransient<IRepositoryFactura, RepositoryFactura>();
 builder.Services.AddScoped<IRepositoryCita, RepositoryCita>();
+builder.Services.AddScoped<IRepositoryUsuario, RepositoryUsuario>();
+builder.Services.AddScoped<IRepositoryServicio, RepositoryServicio>();
+builder.Services.AddScoped<IRepositorySucursal, RepositorySucursal>();
+builder.Services.AddScoped<IRepositoryHorarioSucursal, RepositoryHorarioSucursal>();
+
+
 
 
 
@@ -27,6 +33,10 @@ builder.Services.AddScoped<IRepositoryCita, RepositoryCita>();
 builder.Services.AddTransient<IServiceProducto, ServiceProducto>();
 builder.Services.AddTransient<IServiceFactura, ServiceFactura>();
 builder.Services.AddScoped<IServiceCita, ServiceCita>();
+builder.Services.AddScoped<IServiceUsuario, ServiceUsuario>();
+builder.Services.AddScoped<IServiceServicio, ServiceServicio>();
+builder.Services.AddScoped<IServiceSucursal, ServiceSucursal>();
+builder.Services.AddScoped<IServiceHorarioSucursal, ServiceHorarioSucursal>();
 
 // Configurar Automapper
 builder.Services.AddAutoMapper(config =>
@@ -34,6 +44,10 @@ builder.Services.AddAutoMapper(config =>
     config.AddProfile<ProductoProfile>();
     config.AddProfile<FacturaProfile>();
     config.AddProfile<CitaProfile>();
+    config.AddProfile<UsuarioProfile>();
+    config.AddProfile<ServicioProfile>();
+    config.AddProfile<SucursalProfile>();
+    config.AddProfile<HorarioSucursalProfile>();
 });
 
 // Configurar Conexión a la Base de Datos SQL 

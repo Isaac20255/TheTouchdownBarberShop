@@ -19,5 +19,5 @@ public partial class Resenas
 
     public virtual Citas IdCitaNavigation { get; set; } = null!;
 
-    public virtual Usuarios IdClienteNavigation { get; set; } = null!;
+    public virtual Usuario IdClienteNavigation { get; set; } = null!;
 }

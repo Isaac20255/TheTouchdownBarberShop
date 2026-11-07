@@ -29,9 +29,9 @@ public partial class Facturas
 
     public virtual Citas? IdCitaNavigation { get; set; }
 
-    public virtual Usuarios IdClienteNavigation { get; set; } = null!;
+    public virtual Usuario IdClienteNavigation { get; set; } = null!;
 
     public virtual MetodosPago IdMetodoPagoNavigation { get; set; } = null!;
 
-    public virtual Sucursales IdSucursalNavigation { get; set; } = null!;
+    public virtual Sucursal IdSucursalNavigation { get; set; } = null!;
 }
