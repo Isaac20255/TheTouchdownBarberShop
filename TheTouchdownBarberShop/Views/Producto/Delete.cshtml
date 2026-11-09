@@ -1,0 +1,39 @@
+﻿@model TheTouchdownBarberShop.Application.DTOs.ProductoDTO
+
+@{
+    ViewData["Title"] = "Eliminar Producto";
+}
+
+<div class="row justify-content-center my-4">
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="border-top: 5px solid #dc3545 !important;">
+            <div class="card-header bg-dark text-white py-3 px-4">
+                <h4 class="mb-0 fw-bold">
+                    <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i> Confirmar Eliminación
+                </h4>
+            </div>
+            <div class="card-body p-4 bg-white text-center">
+                <h5 class="text-danger fw-bold mb-3">¿Estás seguro de que deseas eliminar este producto?</h5>
+                <p class="text-muted mb-4">Esta acción no se puede deshacer.</p>
+
+                <div class="card bg-light border-0 p-3 mb-4 mx-auto" style="max-width: 400px;">
+                    <h5 class="fw-bold text-dark mb-1">@Model.Nombre</h5>
+                    <p class="text-muted small mb-2">@Model.Descripcion</p>
+                    <span class="fw-bold text-primary">₡@Model.Precio.ToString("N2")</span>
+                </div>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="IdProducto" />
+                    <div class="d-flex justify-content-center gap-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold">
+                            <i class="bi bi-x-lg me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger px-4 fw-bold shadow">
+                            <i class="bi bi-trash-fill me-1"></i> Sí, Eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

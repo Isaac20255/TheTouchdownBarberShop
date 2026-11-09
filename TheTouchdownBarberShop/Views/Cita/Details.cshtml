@@ -1,0 +1,120 @@
+﻿@model TheTouchdownBarberShop.Application.DTOs.CitaDTO
+
+@{
+    ViewData["Title"] = $"Reserva #{Model.IdCita}";
+
+    // Clase del badge según el estado
+    string ClaseEstado(string estado) => estado switch
+    {
+        "Pendiente" => "bg-warning text-dark",
+        "Confirmada" => "bg-primary",
+        "Completada" => "bg-success",
+        "Cancelada" => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
+
+<!-- Header principal -->
+<div class="rounded-3 py-4 px-4 my-4 shadow-lg position-relative overflow-hidden"
+     style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
+    <div class="container text-white py-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Detalle</span>
+            <h1 class="display-6 fw-bold text-white mb-0">
+                <i class="bi bi-calendar-check me-2"></i>@ViewData["Title"]
+            </h1>
+        </div>
+        <a asp-action="Index" asp-route-idEncargado="@ViewBag.IdEncargado" class="btn btn-outline-light shadow">
+            <i class="bi bi-arrow-left me-1"></i>Volver al historial
+        </a>
+    </div>
+</div>
+
+<!-- Datos generales -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #0d6efd !important;">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <small class="text-muted d-block">Fecha y hora</small>
+                <span class="fw-bold">@Model.FechaHora.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Cliente</small>
+                <span class="fw-bold">@Model.NombreCliente</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Barbero</small>
+                <span class="fw-bold">@Model.NombreBarbero</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Estado</small>
+                <span class="badge px-3 py-2 @ClaseEstado(Model.Estado)">@Model.Estado</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Sucursal</small>
+                <span class="fw-bold">@Model.Sucursal</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Paquete</small>
+                <span class="fw-bold">@(Model.Paquete ?? "Sin paquete")</span>
+            </div>
+            <div class="col-md-6">
+                <small class="text-muted d-block">Observaciones</small>
+                <span class="fw-bold">@(string.IsNullOrWhiteSpace(Model.Observaciones) ? "Sin observaciones" : Model.Observaciones)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Servicios -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #dc3545 !important;">
+    <div class="card-body">
+        <h5 class="fw-bold text-dark mb-3">Servicios de la reserva</h5>
+
+        @if (Model.Servicios.Any())
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var servicio in Model.Servicios)
+                {
+                    <li class="list-group-item bg-transparent">@servicio</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="text-muted mb-0">Esta reserva no tiene servicios registrados.</p>
+        }
+    </div>
+</div>
+
+<!-- Preguntas de la cita -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #0d6efd !important;">
+    <div class="card-body">
+        <h5 class="fw-bold text-dark mb-3">Preguntas de la cita</h5>
+
+        @if (Model.Preguntas.Any())
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var pregunta in Model.Preguntas)
+                {
+                    <li class="list-group-item bg-transparent">@pregunta</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="text-muted mb-0">Esta reserva no tiene preguntas registradas.</p>
+        }
+    </div>
+</div>
+
+<!-- Total -->
+<div class="row justify-content-end mb-5">
+    <div class="col-md-4">
+        <ul class="list-group shadow-sm">
+            <li class="list-group-item d-flex justify-content-between fw-bold fs-5">
+                <span>Total</span><span class="text-primary">₡@Model.Total.ToString("N2")</span>
+            </li>
+        </ul>
+    </div>
+</div>

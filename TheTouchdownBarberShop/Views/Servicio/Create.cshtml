@@ -1,0 +1,63 @@
+﻿@model TheTouchdownBarberShop.Application.DTOs.ServicioDTO
+
+@{
+    ViewData["Title"] = "Crear Servicio";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 bg-white text-dark" style="border-top: 4px solid #0d6efd !important;">
+                <div class="card-body p-4">
+                    <h2 class="fw-bold text-dark mb-4"><i class="bi bi-plus-circle-fill text-primary me-2"></i>Nuevo Servicio</h2>
+
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label text-dark fw-bold">Nombre</label>
+                            <input asp-for="Nombre" class="form-control border-secondary" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdCategoria" class="form-label text-dark fw-bold">Categoría</label>
+                            <select asp-for="IdCategoria" class="form-select border-secondary" asp-items="ViewBag.IdCategoria">
+                                <option value="">-- Seleccione una categoría --</option>
+                            </select>
+                            <span asp-validation-for="IdCategoria" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Precio" class="form-label text-dark fw-bold">Precio (₡)</label>
+                            <input asp-for="Precio" class="form-control border-secondary" />
+                            <span asp-validation-for="Precio" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DuracionMinutos" class="form-label text-dark fw-bold">Duración (Minutos)</label>
+                            <input asp-for="DuracionMinutos" class="form-control border-secondary" />
+                            <span asp-validation-for="DuracionMinutos" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="imagenArchivo" class="form-label text-dark fw-bold">Imagen</label>
+                            <input type="file" name="imagenArchivo" id="imagenArchivo" class="form-control border-secondary" accept="image/*" />
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary fw-bold">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

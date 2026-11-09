@@ -1,0 +1,66 @@
+﻿@model TheTouchdownBarberShop.Application.DTOs.UsuarioDTO
+
+@{
+    ViewData["Title"] = Model.Nombre;
+}
+
+<!-- Header -->
+<div class="rounded-3 py-4 px-4 my-4 shadow-lg position-relative overflow-hidden"
+     style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
+    <div class="container text-white py-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Detalle</span>
+            <h1 class="display-6 fw-bold text-white mb-0">
+                <i class="bi bi-person-badge me-2"></i>@Model.Nombre
+            </h1>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-light shadow">
+            <i class="bi bi-arrow-left me-1"></i>Volver al listado
+        </a>
+    </div>
+</div>
+
+<!-- Card de detalle -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-5 overflow-hidden"
+     style="border-top: 3px solid #0d6efd !important;">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+            <div>
+                <h2 class="card-title text-dark fw-bold mb-1">@Model.Nombre</h2>
+                <p class="text-muted mb-0">
+                    <i class="bi bi-shield-check text-danger me-1"></i>@Model.NombreRol
+                </p>
+            </div>
+            <span class="bg-danger text-white px-2 py-1 rounded fw-bold shadow-sm">#@Model.IdUsuario</span>
+        </div>
+
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item bg-transparent d-flex justify-content-between">
+                <span class="text-muted">Id Usuario</span>
+                <span class="text-dark fw-semibold">@Model.IdUsuario</span>
+            </li>
+            <li class="list-group-item bg-transparent d-flex justify-content-between">
+                <span class="text-muted">Nombre</span>
+                <span class="text-dark fw-semibold">@Model.Nombre</span>
+            </li>
+            <li class="list-group-item bg-transparent d-flex justify-content-between">
+                <span class="text-muted">Rol</span>
+                <span class="text-dark fw-semibold">@Model.NombreRol</span>
+            </li>
+            <li class="list-group-item bg-transparent d-flex justify-content-between">
+                <span class="text-muted">Correo</span>
+                <span class="text-dark fw-semibold">@(string.IsNullOrEmpty(Model.Correo) ? "No especificado" : Model.Correo)</span>
+            </li>
+            <li class="list-group-item bg-transparent d-flex justify-content-between">
+                <span class="text-muted">Teléfono</span>
+                <span class="text-dark fw-semibold">@(string.IsNullOrEmpty(Model.Telefono) ? "No especificado" : Model.Telefono)</span>
+            </li>
+        </ul>
+
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-list-ul me-1"></i>Listado
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<TheTouchdownBarberShop.Application.DTOs.UsuarioDTO>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<!-- Header -->
+<div class="rounded-3 py-4 px-4 my-4 shadow-lg position-relative overflow-hidden"
+     style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
+    <div class="container text-white py-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Usuarios</span>
+            <h1 class="display-6 fw-bold text-white mb-0">
+                <i class="bi bi-people-fill me-2"></i>@ViewBag.Titulo
+            </h1>
+        </div>
+        <span class="badge bg-light text-dark fs-6 shadow-sm">@Model.Count() registrados</span>
+    </div>
+</div>
+
+<!-- Grid de usuarios -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-5 overflow-hidden"
+     style="border-top: 3px solid #0d6efd !important;">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id Usuario</th>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th class="text-center">Detalle</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><span class="badge bg-danger">#@item.IdUsuario</span></td>
+                        <td class="fw-semibold text-dark">@item.Nombre</td>
+                        <td><span class="badge bg-primary">@item.NombreRol</span></td>
+                        <td class="text-dark">@(string.IsNullOrEmpty(item.Correo) ? "No especificado" : item.Correo)</td>
+                        <td class="text-dark">@(string.IsNullOrEmpty(item.Telefono) ? "No especificado" : item.Telefono)</td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@item.IdUsuario" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye-fill me-1"></i>Ver detalle
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
