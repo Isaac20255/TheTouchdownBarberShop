@@ -60,7 +60,42 @@ namespace TheTouchdownBarberShop.Infraestructure.Repository.Implementations
                 await _context.SaveChangesAsync();
             }
     }
-}
+
+        //Tarea Programada
+
+        public async Task<Producto?> ObtenerProductoDelDiaAsync(DateOnly fecha)
+        {
+            return await _context.Productos
+                .FirstOrDefaultAsync(p => p.EsProductoDelDia && p.FechaProductoDelDia == fecha);
+        }
+
+        public async Task MarcarProductoDelDiaAsync(int idProducto, DateOnly fecha)
+        {
+            var anteriores = await _context.Productos.Where(p => p.EsProductoDelDia).ToListAsync();
+            foreach (var p in anteriores)
+            {
+                p.EsProductoDelDia = false;
+                p.FechaProductoDelDia = null;
+            }
+
+            var nuevo = await _context.Productos.FindAsync(idProducto);
+            if (nuevo != null)
+            {
+                nuevo.EsProductoDelDia = true;
+                nuevo.FechaProductoDelDia = fecha;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Producto>> ListarActivosAsync()
+        {
+            return await _context.Productos
+                .Where(p => p.Activo == true) // Cambia 'Activo' por el nombre real de tu propiedad booleana de activo/inactivo si se llama diferente (ej: Activo)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+    }
 }
 
 

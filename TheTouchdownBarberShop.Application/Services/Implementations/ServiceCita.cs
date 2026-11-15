@@ -4,10 +4,6 @@ using TheTouchdownBarberShop.Application.Services.Interfaces;
 using TheTouchdownBarberShop.Infraestructure.Repository.Interfaces;
 
 
-using AutoMapper;
-using TheTouchdownBarberShop.Application.DTOs;
-using TheTouchdownBarberShop.Application.Services.Interfaces;
-using TheTouchdownBarberShop.Infraestructure.Repository.Interfaces;
 
 namespace TheTouchdownBarberShop.Application.Services.Implementations
 {

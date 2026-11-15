@@ -47,8 +47,9 @@ public partial class TheTouchdownBarberShopContext : DbContext
     public virtual DbSet<Sucursal> Sucursales { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
-
     public virtual DbSet<HorariosSucursal> HorariosSucursals { get; set; }
+    public virtual DbSet<ConfiguracionTarea> ConfiguracionTareas { get; set; }
+    public virtual DbSet<BitacoraTarea> BitacoraTareas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -68,6 +69,39 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("nombre");
         });
+
+        modelBuilder.Entity<BitacoraTarea>(entity =>
+        {
+            entity.HasKey(e => e.IdBitacora);
+            entity.ToTable("bitacora_tarea");
+
+            entity.Property(e => e.IdBitacora).HasColumnName("id_bitacora");
+            entity.Property(e => e.NombreTarea).HasColumnName("nombre_tarea");
+            entity.Property(e => e.FechaEjecucion).HasColumnName("fecha_ejecucion");
+            entity.Property(e => e.IdProducto).HasColumnName("id_producto");
+            entity.Property(e => e.CorreoEnviado).HasColumnName("correo_enviado");
+            entity.Property(e => e.Resultado).HasColumnName("resultado");
+
+            entity.HasOne(d => d.IdProductoNavigation)
+                .WithMany()
+                .HasForeignKey(d => d.IdProducto)
+                .HasConstraintName("FK_bitacora_tarea_productos");
+        });
+
+        modelBuilder.Entity<ConfiguracionTarea>(entity =>
+        {
+            entity.HasKey(e => e.IdConfiguracion);
+            entity.ToTable("configuracion_tarea");
+
+            entity.Property(e => e.IdConfiguracion).HasColumnName("id_configuracion");
+            entity.Property(e => e.NombreTarea).HasColumnName("nombre_tarea");
+            entity.Property(e => e.Activa).HasColumnName("activa");
+            entity.Property(e => e.HoraEjecucion).HasColumnName("hora_ejecucion");
+            entity.Property(e => e.CorreoDestino).HasColumnName("correo_destino");
+        });
+
+
+
 
         modelBuilder.Entity<CategoriasServicios>(entity =>
         {

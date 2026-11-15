@@ -15,5 +15,6 @@ namespace TheTouchdownBarberShop.Application.Services.Interfaces
         Task UpdateAsync(ProductoDTO productoDto);
 
         Task DeleteAsync(int id);
+
     }
 }

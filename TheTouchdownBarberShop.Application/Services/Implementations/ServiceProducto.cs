@@ -57,5 +57,10 @@ namespace TheTouchdownBarberShop.Application.Services.Implementations
         {
            await _repository.DeleteAsync(id);
         }
+
+
+
+
+
     }
 }

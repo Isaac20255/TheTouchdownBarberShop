@@ -3,6 +3,7 @@ using Serilog;
 using Serilog.Events;
 using System.Text;
 using TheTouchdownBarberShop.Application.Profiles;
+using TheTouchdownBarberShop.Application.Services;
 using TheTouchdownBarberShop.Application.Services.Implementations;
 using TheTouchdownBarberShop.Application.Services.Interfaces;
 using TheTouchdownBarberShop.Infraestructure.Data;
@@ -24,10 +25,7 @@ builder.Services.AddScoped<IRepositoryUsuario, RepositoryUsuario>();
 builder.Services.AddScoped<IRepositoryServicio, RepositoryServicio>();
 builder.Services.AddScoped<IRepositorySucursal, RepositorySucursal>();
 builder.Services.AddScoped<IRepositoryHorarioSucursal, RepositoryHorarioSucursal>();
-
-
-
-
+builder.Services.AddScoped<IRepositoryTarea, RepositoryTarea>();
 
 // Services
 builder.Services.AddTransient<IServiceProducto, ServiceProducto>();
@@ -37,6 +35,12 @@ builder.Services.AddScoped<IServiceUsuario, ServiceUsuario>();
 builder.Services.AddScoped<IServiceServicio, ServiceServicio>();
 builder.Services.AddScoped<IServiceSucursal, ServiceSucursal>();
 builder.Services.AddScoped<IServiceHorarioSucursal, ServiceHorarioSucursal>();
+
+//Tarea Programada
+builder.Services.AddScoped<IServiceBitacoraTarea, ServiceBitacoraTarea>();
+builder.Services.AddScoped<IServiceProductoDelDia, ServiceProductoDelDia>();
+builder.Services.AddScoped<IServiceCorreo, ServiceCorreo>();
+builder.Services.AddHostedService<ServiceProductoDelDiaBackground>();
 
 // Configurar Automapper
 builder.Services.AddAutoMapper(config =>
@@ -48,35 +52,30 @@ builder.Services.AddAutoMapper(config =>
     config.AddProfile<ServicioProfile>();
     config.AddProfile<SucursalProfile>();
     config.AddProfile<HorarioSucursalProfile>();
+    config.AddProfile<BitacoraTareaProfile>();
 });
 
 // Configurar Conexión a la Base de Datos SQL 
 builder.Services.AddDbContext<TheTouchdownBarberShopContext>(options => {
-    // it reads appsettings.json file 
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDataBase"));
 
     if (builder.Environment.IsDevelopment())
         options.EnableSensitiveDataLogging();
 });
 
-//***********************
-//Configuracion Serilog
-// Logger. P.E. Verbose = muestra SQl Statement
+// Configuración Serilog
 var logger = new LoggerConfiguration()
-                    // Limitar la informacion de depuracion
-                    .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
-                    .Enrich.FromLogContext()
-                    // Log LogEventLevel.Verbose muestra mucha informacion, pero no es necesaria solo para el proceso de depuracion
-                    .WriteTo.Console(LogEventLevel.Information)
-                    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Information).WriteTo.File(@"Logs\Info-.log", shared: true, encoding: Encoding.ASCII, rollingInterval: RollingInterval.Day))
-                    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Debug).WriteTo.File(@"Logs\Debug-.log", shared: true, encoding: System.Text.Encoding.ASCII, rollingInterval: RollingInterval.Day))
-                    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Warning).WriteTo.File(@"Logs\Warning-.log", shared: true, encoding: System.Text.Encoding.ASCII, rollingInterval: RollingInterval.Day))
-                    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(@"Logs\Error-.log", shared: true, encoding: Encoding.ASCII, rollingInterval: RollingInterval.Day))
-                    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Fatal).WriteTo.File(@"Logs\Fatal-.log", shared: true, encoding: Encoding.ASCII, rollingInterval: RollingInterval.Day))
-                    .CreateLogger();
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(LogEventLevel.Information)
+    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Information).WriteTo.File(@"Logs\Info-.log", shared: true, encoding: Encoding.ASCII, rollingInterval: RollingInterval.Day))
+    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Debug).WriteTo.File(@"Logs\Debug-.log", shared: true, encoding: System.Text.Encoding.ASCII, rollingInterval: RollingInterval.Day))
+    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Warning).WriteTo.File(@"Logs\Warning-.log", shared: true, encoding: System.Text.Encoding.ASCII, rollingInterval: RollingInterval.Day))
+    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(@"Logs\Error-.log", shared: true, encoding: Encoding.ASCII, rollingInterval: RollingInterval.Day))
+    .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Fatal).WriteTo.File(@"Logs\Fatal-.log", shared: true, encoding: Encoding.ASCII, rollingInterval: RollingInterval.Day))
+    .CreateLogger();
 
 builder.Host.UseSerilog(logger);
-//***************************
 
 var app = builder.Build();
 
@@ -84,19 +83,14 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 else
 {
-    // Error control Middleware 
     app.UseMiddleware<ErrorHandlingMiddleware>();
 }
 
-
-
-//Activar soporte a la solicitud de registro con SERILOG 
+// Activar soporte a la solicitud de registro con SERILOG 
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheTouchdownBarberShop.Infraestructure.Models;
 
@@ -28,4 +29,10 @@ public partial class Producto
     public virtual ICollection<FacturaProductos> FacturaProductos { get; set; } = new List<FacturaProductos>();
 
     public virtual CategoriasProductos IdCategoriaProductoNavigation { get; set; } = null!;
+
+    [Column("es_producto_del_dia")]
+    public bool EsProductoDelDia { get; set; }
+
+    [Column("fecha_producto_del_dia")]
+    public DateOnly? FechaProductoDelDia { get; set; }
 }

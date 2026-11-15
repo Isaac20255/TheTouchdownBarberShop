@@ -20,5 +20,9 @@ namespace TheTouchdownBarberShop.Application.DTOs
         public string? Marca { get; set; }
         public string? Presentacion { get; set; }
         public bool Activo { get; set; }
+
+        //Tarea Programada
+        public bool EsProductoDelDia { get; set; }
+        public DateOnly? FechaProductoDelDia { get; set; }
     }
 }
