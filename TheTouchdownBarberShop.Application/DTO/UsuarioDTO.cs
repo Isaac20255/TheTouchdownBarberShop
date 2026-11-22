@@ -7,4 +7,5 @@ public record UsuarioDTO
     public string NombreRol { get; set; } = null!;
     public string? Correo { get; set; }
     public string? Telefono { get; set; }
+    public int? IdSucursal { get; set; }
 }

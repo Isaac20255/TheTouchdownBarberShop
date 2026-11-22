@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TheTouchdownBarberShop.Application.Services.Interfaces;
 
 namespace TheTouchdownBarberShop.Controllers
 {
+    [Authorize]
     public class UsuarioController : Controller
     {
         private readonly IServiceUsuario _serviceUsuario;
@@ -50,6 +52,7 @@ namespace TheTouchdownBarberShop.Controllers
         }
 
         // GET: /Usuario/Create
+        [Authorize(Roles = "Administrador")]
         public IActionResult Create()
         {
             return View();
@@ -58,6 +61,7 @@ namespace TheTouchdownBarberShop.Controllers
         // POST: /Usuario/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public IActionResult Create(IFormCollection collection)
         {
             try
@@ -71,6 +75,7 @@ namespace TheTouchdownBarberShop.Controllers
         }
 
         // GET: /Usuario/Edit/5
+        [Authorize(Roles = "Administrador")]
         public IActionResult Edit(int id)
         {
             return View();
@@ -79,6 +84,7 @@ namespace TheTouchdownBarberShop.Controllers
         // POST: /Usuario/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public IActionResult Edit(int id, IFormCollection collection)
         {
             try
@@ -92,6 +98,7 @@ namespace TheTouchdownBarberShop.Controllers
         }
 
         // GET: /Usuario/Delete/5
+        [Authorize(Roles = "Administrador")]
         public IActionResult Delete(int id)
         {
             return View();
@@ -100,6 +107,7 @@ namespace TheTouchdownBarberShop.Controllers
         // POST: /Usuario/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public IActionResult Delete(int id, IFormCollection collection)
         {
             try

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TheTouchdownBarberShop.Application.DTOs;
 using TheTouchdownBarberShop.Application.Services.Interfaces;
@@ -14,8 +15,10 @@ namespace TheTouchdownBarberShop.Web.Controllers
             _serviceCita = serviceCita;
         }
 
-        // Valida el encargado recibido contra los encargados de la BD;
-        // si no es válido o no se envió, usa el primero registrado.
+        private bool EsStaff =>
+            User.Identity?.IsAuthenticated == true &&
+            (User.IsInRole("Administrador") || User.IsInRole("Encargado"));
+
         private static int? ResolverEncargado(List<(int IdUsuario, string Descripcion)> encargados, int? idEncargado)
         {
             if (encargados.Count == 0) return null;
@@ -28,10 +31,39 @@ namespace TheTouchdownBarberShop.Web.Controllers
 
         public async Task<IActionResult> Index(int? idEncargado)
         {
-            var encargados = await _serviceCita.ListEncargadosAsync();
-            var idValido = ResolverEncargado(encargados, idEncargado);
+            if (!EsStaff)
+            {
+                // Si es cliente autenticado, podemos filtrar en memoria por su correo/nombre si coincide
+                // y si no ha iniciado sesión, se envía vacío.
+                ViewBag.Encargados = new List<SelectListItem>();
+                ViewBag.IdEncargado = null;
 
-            ViewBag.Encargados = encargados
+                if (User.Identity?.IsAuthenticated != true)
+                    return View(new List<CitaDTO>());
+
+                var encargados = await _serviceCita.ListEncargadosAsync();
+                var todas = new List<CitaDTO>();
+                foreach (var enc in encargados)
+                {
+                    var citasEnc = await _serviceCita.ListAsync(enc.IdUsuario);
+                    todas.AddRange(citasEnc);
+                }
+
+                var correoUsuario = User.FindFirstValue(ClaimTypes.Email);
+                var nombreUsuario = User.Identity?.Name;
+
+                var citasCliente = todas
+      .Where(c => !string.IsNullOrWhiteSpace(nombreUsuario) &&
+                   string.Equals(c.NombreCliente, nombreUsuario, StringComparison.OrdinalIgnoreCase))
+      .ToList();
+
+                return View(citasCliente);
+            }
+
+            var encargadosStaff = await _serviceCita.ListEncargadosAsync();
+            var idValido = ResolverEncargado(encargadosStaff, idEncargado);
+
+            ViewBag.Encargados = encargadosStaff
                 .Select(e => new SelectListItem(e.Descripcion, e.IdUsuario.ToString(), e.IdUsuario == idValido))
                 .ToList();
             ViewBag.IdEncargado = idValido;
@@ -45,6 +77,9 @@ namespace TheTouchdownBarberShop.Web.Controllers
 
         public async Task<IActionResult> Details(int id, int? idEncargado)
         {
+            if (!EsStaff)
+                return Forbid();
+
             var encargados = await _serviceCita.ListEncargadosAsync();
             var idValido = ResolverEncargado(encargados, idEncargado);
             if (idValido is null) return NotFound();

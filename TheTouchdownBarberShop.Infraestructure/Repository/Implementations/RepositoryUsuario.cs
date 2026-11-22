@@ -9,7 +9,7 @@ public class RepositoryUsuario : IRepositoryUsuario
 
     public async Task<ICollection<Usuario>> ListAsync() =>
         await _context.Usuarios
-            .Include(u => u.IdRolNavigation)    
+            .Include(u => u.IdRolNavigation)
             .AsNoTracking()
             .OrderBy(u => u.IdUsuario)
             .ToListAsync();
@@ -20,5 +20,13 @@ public class RepositoryUsuario : IRepositoryUsuario
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.IdUsuario == id);
 
-    
+    public async Task<Usuario?> FindByEmailAsync(string correo)
+    {
+        var correoNormalizado = correo.Trim().ToLower();
+
+        return await _context.Usuarios
+            .Include(u => u.IdRolNavigation)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Correo.ToLower() == correoNormalizado);
+    }
 }

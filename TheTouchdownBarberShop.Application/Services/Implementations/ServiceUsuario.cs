@@ -15,4 +15,19 @@ public class ServiceUsuario : IServiceUsuario
         var u = await _repo.FindByIdAsync(id);
         return u is null ? null : _mapper.Map<UsuarioDTO>(u);
     }
+
+    public async Task<UsuarioDTO?> ValidarCredencialesAsync(string correo, string contrasenia)
+    {
+        if (string.IsNullOrWhiteSpace(correo) || string.IsNullOrEmpty(contrasenia))
+            return null;
+
+        var u = await _repo.FindByEmailAsync(correo);
+        if (u is null || string.IsNullOrEmpty(u.Contrasenia))
+            return null;
+
+        if (!BCrypt.Net.BCrypt.Verify(contrasenia, u.Contrasenia))
+            return null;
+
+        return _mapper.Map<UsuarioDTO>(u);
+    }
 }

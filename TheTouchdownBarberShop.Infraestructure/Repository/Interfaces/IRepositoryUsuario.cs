@@ -4,4 +4,5 @@ public interface IRepositoryUsuario
 {
     Task<ICollection<Usuario>> ListAsync();
     Task<Usuario?> FindByIdAsync(int id);
+    Task<Usuario?> FindByEmailAsync(string correo);
 }
