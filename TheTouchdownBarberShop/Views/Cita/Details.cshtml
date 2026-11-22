@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = $"Reserva #{Model.IdCita}";
 
-    // Clase del badge según el estado
     string ClaseEstado(string estado) => estado switch
     {
         "Pendiente" => "bg-warning text-dark",
@@ -24,7 +23,7 @@
                 <i class="bi bi-calendar-check me-2"></i>@ViewData["Title"]
             </h1>
         </div>
-        <a asp-action="Index" asp-route-idEncargado="@ViewBag.IdEncargado" class="btn btn-outline-light shadow">
+        <a asp-action="Index" class="btn btn-outline-light shadow">
             <i class="bi bi-arrow-left me-1"></i>Volver al historial
         </a>
     </div>

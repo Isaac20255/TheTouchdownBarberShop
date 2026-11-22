@@ -41,35 +41,37 @@
             <h1 class="display-6 fw-bold text-white mb-0">
                 <i class="bi bi-calendar-check me-2"></i>@ViewData["Title"]
             </h1>
-            @if (sucursal != null)
-            {
-                <p class="mb-0 mt-2 text-white-50"><i class="bi bi-shop me-1"></i>@sucursal</p>
-            }
+            <p id="subtituloSucursal" class="mb-0 mt-2 text-white-50">
+                @if (!string.IsNullOrWhiteSpace(sucursal))
+                {
+                    <i class="bi bi-shop me-1"></i>
+                    @sucursal
+                }
+            </p>
         </div>
 
         @if (esStaff)
         {
             @if (encargados.Any())
             {
-                <form asp-action="Index" method="get" class="rounded-3 p-3 shadow-sm"
-                      style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(4px); min-width: 320px;">
+                <div class="rounded-3 p-3 shadow-sm"
+                     style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(4px); min-width: 320px;">
                     <label for="idEncargado" class="d-block small text-uppercase fw-bold text-white-50 mb-2"
                            style="letter-spacing: 0.05em;">
-                        Filtrar por encargado
+                        Encargado / Sucursal
                     </label>
                     <div class="input-group">
                         <span class="input-group-text bg-danger border-danger text-white">
                             <i class="bi bi-person-badge"></i>
                         </span>
-                        <select id="idEncargado" name="idEncargado" class="form-select border-0 fw-semibold"
-                                onchange="this.form.submit()">
+                        <select id="idEncargado" name="idEncargado" class="form-select border-0 fw-semibold">
                             @foreach (var e in encargados)
                             {
                                 <option value="@e.Value" selected="@e.Selected">@e.Text</option>
                             }
                         </select>
                     </div>
-                </form>
+                </div>
             }
             else
             {
@@ -95,8 +97,32 @@
 }
 else
 {
+    @if (esStaff)
+    {
+        <!-- Filtros automáticos por cliente y/o fecha sin recargar página -->
+        <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #0d6efd !important;">
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label for="filtroCliente" class="form-label fw-semibold text-dark">Cliente</label>
+                        <input type="text" id="filtroCliente" class="form-control" placeholder="Escribe el nombre del cliente..." autocomplete="off" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="filtroFecha" class="form-label fw-semibold text-dark">Fecha</label>
+                        <input type="date" id="filtroFecha" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-1"></i>Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     <!-- Listado en Cards -->
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+    <div id="contenedorCitas" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
         @if (Model != null && Model.Any())
         {
             @foreach (var item in Model)
@@ -147,4 +173,140 @@ else
             </div>
         }
     </div>
+}
+
+@if (esStaff)
+{
+    <script>
+        (function () {
+            const selectEncargado = document.getElementById("idEncargado");
+            const inputCliente = document.getElementById("filtroCliente");
+            const inputFecha = document.getElementById("filtroFecha");
+            const btnLimpiar = document.getElementById("btnLimpiarFiltros");
+            const contenedor = document.getElementById("contenedorCitas");
+            const subtituloSucursal = document.getElementById("subtituloSucursal");
+
+            if (!inputCliente || !inputFecha || !contenedor) return;
+
+            let temporizadorBusqueda = null;
+
+            const estilosEstado = {
+                "Pendiente": { badge: "bg-warning text-dark", borde: "#ffc107" },
+                "Confirmada": { badge: "bg-primary", borde: "#0d6efd" },
+                "Completada": { badge: "bg-success", borde: "#198754" },
+                "Cancelada": { badge: "bg-danger", borde: "#dc3545" }
+            };
+
+            function obtenerEstilo(estado) {
+                return estilosEstado[estado] || { badge: "bg-secondary", borde: "#6c757d" };
+            }
+
+            function escaparHtml(texto) {
+                const div = document.createElement("div");
+                div.textContent = texto ?? "";
+                return div.innerHTML;
+            }
+
+            function renderizarCitas(citas) {
+                const idEnc = selectEncargado ? selectEncargado.value : "";
+
+                if (!Array.isArray(citas) || citas.length === 0) {
+                    contenedor.innerHTML = `
+                        <div class="col-12">
+                            <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-5"
+                                 style="border-top: 3px solid #dc3545 !important;">
+                                <i class="bi bi-inbox fs-1 text-danger mb-3"></i>
+                                <h4 class="text-dark fw-bold">Sin resultados</h4>
+                                <p class="text-muted mb-0">No se encontraron citas con los filtros indicados.</p>
+                            </div>
+                        </div>`;
+                    return;
+                }
+
+                if (subtituloSucursal && citas[0].sucursal) {
+                    subtituloSucursal.innerHTML = `<i class="bi bi-shop me-1"></i>${escaparHtml(citas[0].sucursal)}`;
+                }
+
+                contenedor.innerHTML = citas.map(cita => {
+                    const estilo = obtenerEstilo(cita.estado);
+                    const urlDetalle = idEnc
+                        ? `/Cita/Details/${cita.idCita}?idEncargado=${encodeURIComponent(idEnc)}`
+                        : `/Cita/Details/${cita.idCita}`;
+
+                    return `
+                        <div class="col">
+                            <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center overflow-hidden"
+                                 style="border-top: 3px solid ${estilo.borde} !important;">
+                                <div class="card-body d-flex flex-column">
+                                    <p class="text-muted mb-2">
+                                        <i class="bi bi-calendar-event me-1"></i>${escaparHtml(cita.fechaHora)}
+                                    </p>
+                                    <h5 class="card-title text-dark fw-bold mb-2">${escaparHtml(cita.nombreCliente)}</h5>
+                                    <p class="card-text text-muted flex-grow-1">
+                                        <i class="bi bi-scissors me-1"></i>${escaparHtml(cita.nombreBarbero)}
+                                    </p>
+                                    <div class="mb-2">
+                                        <span class="badge px-3 py-2 ${estilo.badge}">${escaparHtml(cita.estado)}</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 p-2 pb-3">
+                                    <a href="${urlDetalle}"
+                                       class="btn btn-sm btn-outline-primary w-100" title="Detalles">
+                                        <i class="bi bi-eye-fill me-1"></i>Ver detalle
+                                    </a>
+                                </div>
+                            </div>
+                        </div>`;
+                }).join("");
+            }
+
+            async function aplicarFiltros() {
+                const params = new URLSearchParams();
+                const idEnc = selectEncargado ? selectEncargado.value : "";
+                const clienteVal = inputCliente.value.trim();
+                const fechaVal = inputFecha.value;
+
+                if (idEnc) params.append("idEncargado", idEnc);
+                if (clienteVal) params.append("cliente", clienteVal);
+                if (fechaVal) params.append("fecha", fechaVal);
+
+                const url = `/Cita/Filtrar${params.toString() ? "?" + params.toString() : ""}`;
+                const response = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                if (!response.ok) return;
+
+                const data = await response.json();
+                renderizarCitas(data);
+            }
+
+            function programarFiltro(delayMs = 200) {
+                clearTimeout(temporizadorBusqueda);
+                temporizadorBusqueda = setTimeout(aplicarFiltros, delayMs);
+            }
+
+            if (selectEncargado) {
+                selectEncargado.addEventListener("change", aplicarFiltros);
+            }
+
+            inputCliente.addEventListener("input", () => programarFiltro(200));
+            inputCliente.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    clearTimeout(temporizadorBusqueda);
+                    aplicarFiltros();
+                }
+            });
+
+            inputFecha.addEventListener("change", aplicarFiltros);
+            inputFecha.addEventListener("input", aplicarFiltros);
+
+            if (btnLimpiar) {
+                btnLimpiar.addEventListener("click", () => {
+                    clearTimeout(temporizadorBusqueda);
+                    inputCliente.value = "";
+                    inputFecha.value = "";
+                    aplicarFiltros();
+                });
+            }
+        })();
+    </script>
 }
