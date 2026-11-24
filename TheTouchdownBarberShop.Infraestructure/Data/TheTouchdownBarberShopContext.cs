@@ -300,11 +300,16 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .HasFilter("([id_cita] IS NOT NULL)");
 
             entity.Property(e => e.IdFactura).HasColumnName("id_factura");
+            entity.Property(e => e.Estado)
+                .HasMaxLength(20)
+                .HasDefaultValue("Facturado")
+                .HasColumnName("estado");
             entity.Property(e => e.FechaEmision)
                 .HasDefaultValueSql("(sysdatetime())")
                 .HasColumnName("fecha_emision");
             entity.Property(e => e.IdCita).HasColumnName("id_cita");
             entity.Property(e => e.IdCliente).HasColumnName("id_cliente");
+            entity.Property(e => e.IdEncargado).HasColumnName("id_encargado");
             entity.Property(e => e.IdMetodoPago).HasColumnName("id_metodo_pago");
             entity.Property(e => e.IdSucursal).HasColumnName("id_sucursal");
             entity.Property(e => e.Impuesto)
@@ -326,9 +331,13 @@ public partial class TheTouchdownBarberShopContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_facturas_cliente");
 
+            entity.HasOne(d => d.IdEncargadoNavigation)
+                .WithMany()
+                .HasForeignKey(d => d.IdEncargado)
+                .HasConstraintName("FK_facturas_encargado");
+
             entity.HasOne(d => d.IdMetodoPagoNavigation).WithMany(p => p.Facturas)
                 .HasForeignKey(d => d.IdMetodoPago)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_facturas_metodos_pago");
 
             entity.HasOne(d => d.IdSucursalNavigation)

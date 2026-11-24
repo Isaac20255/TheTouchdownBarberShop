@@ -1,7 +1,25 @@
 ﻿@model IEnumerable<TheTouchdownBarberShop.Application.DTO.FacturaDTO>
 
 @{
-    ViewData["Title"] = ViewBag.Titulo ?? "Historial de Facturación";
+    ViewData["Title"] = "Historial de Facturación";
+    var sucursal = Model?.FirstOrDefault()?.SucursalNombre;
+
+    var encargados = ViewBag.Encargados as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
+                     ?? new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+
+    string ClaseEstado(string? estado) => estado switch
+    {
+        "Proforma" => "bg-warning text-dark",
+        "Facturado" => "bg-success",
+        _ => "bg-secondary"
+    };
+
+    string ColorBorde(string? estado) => estado switch
+    {
+        "Proforma" => "#ffc107",
+        "Facturado" => "#198754",
+        _ => "#6c757d"
+    };
 }
 
 <!-- Header principal -->
@@ -9,43 +27,126 @@
      style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
     <div class="container text-white py-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
-            <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Administrador</span>
+            <span class="badge bg-danger text-uppercase px-3 py-2 mb-2 shadow-sm">Encargado</span>
             <h1 class="display-6 fw-bold text-white mb-0">
                 <i class="bi bi-receipt me-2"></i>@ViewData["Title"]
             </h1>
+            <p id="subtituloSucursal" class="mb-0 mt-2 text-white-50">
+                @if (!string.IsNullOrWhiteSpace(sucursal))
+                {
+                    <i class="bi bi-shop me-1"></i>
+                    @sucursal
+                }
+            </p>
+        </div>
+
+        @if (encargados.Any())
+        {
+            <div class="rounded-3 p-3 shadow-sm"
+                 style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(4px); min-width: 320px;">
+                <label for="idEncargado" class="d-block small text-uppercase fw-bold text-white-50 mb-2"
+                       style="letter-spacing: 0.05em;">
+                    Encargado / Sucursal
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-danger border-danger text-white">
+                        <i class="bi bi-person-badge"></i>
+                    </span>
+                    <select id="idEncargado" name="idEncargado" class="form-select border-0 fw-semibold">
+                        @foreach (var e in encargados)
+                        {
+                            <option value="@e.Value" selected="@e.Selected">@e.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+        else
+        {
+            <span class="badge bg-warning text-dark px-3 py-2">No hay encargados registrados en la BD</span>
+        }
+    </div>
+</div>
+
+<!-- Notificaciones -->
+@if (TempData["Success"] is string mensajeExito)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@mensajeExito
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+@if (TempData["Error"] is string mensajeError)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@mensajeError
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-end mb-3">
+    <a id="btnNuevaFactura" asp-action="Registrar" asp-route-idEncargado="@ViewBag.IdEncargado"
+       class="btn btn-danger fw-bold shadow-sm">
+        <i class="bi bi-plus-circle me-1"></i>Nueva factura
+    </a>
+</div>
+
+<!-- Filtros por cliente y/o fecha -->
+<div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #0d6efd !important;">
+    <div class="card-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-6">
+                <label for="filtroCliente" class="form-label fw-semibold text-dark">Cliente</label>
+                <input type="text" id="filtroCliente" class="form-control" placeholder="Escribe el nombre del cliente..." autocomplete="off" />
+            </div>
+            <div class="col-md-4">
+                <label for="filtroFecha" class="form-label fw-semibold text-dark">Fecha</label>
+                <input type="date" id="filtroFecha" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i>Limpiar
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Listado en Cards -->
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+<div id="contenedorFacturas" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
     @if (Model != null && Model.Any())
     {
         @foreach (var item in Model)
         {
             <div class="col">
                 <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center overflow-hidden"
-                     style="border-top: 3px solid #0d6efd !important;">
+                     style="border-top: 3px solid @ColorBorde(item.Estado) !important;">
 
-                    <!-- Contenido: 4 campos -->
                     <div class="card-body d-flex flex-column">
                         <p class="text-muted mb-2">
                             <i class="bi bi-calendar-event me-1"></i>@item.FechaEmision.ToString("dd/MM/yyyy HH:mm")
                         </p>
                         <h5 class="card-title text-dark fw-bold mb-2">@item.ClienteNombre</h5>
                         <p class="card-text text-muted flex-grow-1">
-                            <i class="bi bi-credit-card me-1"></i>@item.MetodoPagoNombre
+                            <i class="bi bi-receipt me-1"></i>Factura #@item.IdFactura &middot; ₡@item.Total.ToString("N2")
                         </p>
                         <div class="mb-2">
-                            <span class="fs-5 fw-bold text-primary">₡@item.Total.ToString("N2")</span>
+                            <span class="badge px-3 py-2 @ClaseEstado(item.Estado)">@item.Estado</span>
                         </div>
                     </div>
 
-                    <!-- Botón de acción -->
-                    <div class="card-footer bg-transparent border-0 p-2 pb-3">
-                        <a asp-action="Details" asp-route-id="@item.IdFactura" class="btn btn-sm btn-outline-primary w-100" title="Detalles">
-                            <i class="bi bi-eye-fill me-1"></i>Ver detalle
+                    <div class="card-footer bg-transparent border-0 p-2 pb-3 d-flex gap-2">
+                        <a asp-action="Details" asp-route-id="@item.IdFactura" asp-route-idEncargado="@ViewBag.IdEncargado"
+                           class="btn btn-sm btn-outline-primary flex-fill" title="Detalle">
+                            <i class="bi bi-eye-fill me-1"></i>Detalle
                         </a>
+                        @if (item.Estado == "Proforma")
+                        {
+                            <a asp-action="Registrar" asp-route-idProforma="@item.IdFactura" asp-route-idEncargado="@ViewBag.IdEncargado"
+                               class="btn btn-sm btn-danger flex-fill" title="Registrar factura">
+                                <i class="bi bi-check2-circle me-1"></i>Facturar
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
@@ -58,8 +159,166 @@
                  style="border-top: 3px solid #dc3545 !important;">
                 <i class="bi bi-inbox fs-1 text-danger mb-3"></i>
                 <h4 class="text-dark fw-bold">No hay facturas registradas</h4>
-                <p class="text-muted mb-0">Aún no se han generado facturas.</p>
+                <p class="text-muted mb-0">Aún no hay facturas ni proformas en esta sucursal.</p>
             </div>
         </div>
     }
 </div>
+
+<script>
+    (function () {
+        const selectEncargado = document.getElementById("idEncargado");
+        const inputCliente = document.getElementById("filtroCliente");
+        const inputFecha = document.getElementById("filtroFecha");
+        const btnLimpiar = document.getElementById("btnLimpiarFiltros");
+        const btnNueva = document.getElementById("btnNuevaFactura");
+        const contenedor = document.getElementById("contenedorFacturas");
+        const subtituloSucursal = document.getElementById("subtituloSucursal");
+
+        let temporizadorBusqueda = null;
+
+        const estilosEstado = {
+            "Proforma": { badge: "bg-warning text-dark", borde: "#ffc107" },
+            "Facturado": { badge: "bg-success", borde: "#198754" }
+        };
+
+        function obtenerEstilo(estado) {
+            return estilosEstado[estado] || { badge: "bg-secondary", borde: "#6c757d" };
+        }
+
+        function escaparHtml(texto) {
+            const div = document.createElement("div");
+            div.textContent = texto ?? "";
+            return div.innerHTML;
+        }
+
+        function formatoMoneda(valor) {
+            return Number(valor).toLocaleString("es-CR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function sufijoEncargado(idEnc) {
+            return idEnc ? `?idEncargado=${encodeURIComponent(idEnc)}` : "";
+        }
+
+        function actualizarEnlaceNueva() {
+            if (!btnNueva) return;
+            const idEnc = selectEncargado ? selectEncargado.value : "";
+            btnNueva.href = `/Factura/Registrar${sufijoEncargado(idEnc)}`;
+        }
+
+        function construirPie(idFactura, idEnc, estado) {
+            const idParam = idEnc ? `&idEncargado=${encodeURIComponent(idEnc)}` : "";
+
+            const botonFacturar = estado === "Proforma"
+                ? `<a href="/Factura/Registrar?idProforma=${idFactura}${idParam}"
+                      class="btn btn-sm btn-danger flex-fill" title="Registrar factura">
+                       <i class="bi bi-check2-circle me-1"></i>Facturar
+                   </a>`
+                : "";
+
+            return `
+                <div class="card-footer bg-transparent border-0 p-2 pb-3 d-flex gap-2">
+                    <a href="/Factura/Details/${idFactura}${sufijoEncargado(idEnc)}"
+                       class="btn btn-sm btn-outline-primary flex-fill" title="Detalle">
+                        <i class="bi bi-eye-fill me-1"></i>Detalle
+                    </a>
+                    ${botonFacturar}
+                </div>`;
+        }
+
+        function renderizarFacturas(facturas) {
+            const idEnc = selectEncargado ? selectEncargado.value : "";
+
+            if (!Array.isArray(facturas) || facturas.length === 0) {
+                contenedor.innerHTML = `
+                    <div class="col-12">
+                        <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-5"
+                             style="border-top: 3px solid #dc3545 !important;">
+                            <i class="bi bi-inbox fs-1 text-danger mb-3"></i>
+                            <h4 class="text-dark fw-bold">Sin resultados</h4>
+                            <p class="text-muted mb-0">No se encontraron facturas con los filtros indicados.</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            if (subtituloSucursal && facturas[0].sucursalNombre) {
+                subtituloSucursal.innerHTML = `<i class="bi bi-shop me-1"></i>${escaparHtml(facturas[0].sucursalNombre)}`;
+            }
+
+            contenedor.innerHTML = facturas.map(f => {
+                const estilo = obtenerEstilo(f.estado);
+
+                return `
+                    <div class="col">
+                        <div class="card h-100 bg-secondary bg-opacity-10 border-0 shadow-sm text-center overflow-hidden"
+                             style="border-top: 3px solid ${estilo.borde} !important;">
+                            <div class="card-body d-flex flex-column">
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-calendar-event me-1"></i>${escaparHtml(f.fecha)}
+                                </p>
+                                <h5 class="card-title text-dark fw-bold mb-2">${escaparHtml(f.clienteNombre)}</h5>
+                                <p class="card-text text-muted flex-grow-1">
+                                    <i class="bi bi-receipt me-1"></i>Factura #${f.idFactura} &middot; ₡${formatoMoneda(f.total)}
+                                </p>
+                                <div class="mb-2">
+                                    <span class="badge px-3 py-2 ${estilo.badge}">${escaparHtml(f.estado)}</span>
+                                </div>
+                            </div>
+                            ${construirPie(f.idFactura, idEnc, f.estado)}
+                        </div>
+                    </div>`;
+            }).join("");
+        }
+
+        async function aplicarFiltros() {
+            const params = new URLSearchParams();
+            const idEnc = selectEncargado ? selectEncargado.value : "";
+            const clienteVal = inputCliente.value.trim();
+            const fechaVal = inputFecha.value;
+
+            if (idEnc) params.append("idEncargado", idEnc);
+            if (clienteVal) params.append("cliente", clienteVal);
+            if (fechaVal) params.append("fecha", fechaVal);
+
+            const url = `/Factura/Filtrar${params.toString() ? "?" + params.toString() : ""}`;
+            const response = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+            if (!response.ok) return;
+
+            renderizarFacturas(await response.json());
+        }
+
+        function programarFiltro(delayMs = 200) {
+            clearTimeout(temporizadorBusqueda);
+            temporizadorBusqueda = setTimeout(aplicarFiltros, delayMs);
+        }
+
+        if (selectEncargado) {
+            selectEncargado.addEventListener("change", () => {
+                actualizarEnlaceNueva();
+                aplicarFiltros();
+            });
+        }
+
+        inputCliente.addEventListener("input", () => programarFiltro(200));
+        inputCliente.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                clearTimeout(temporizadorBusqueda);
+                aplicarFiltros();
+            }
+        });
+
+        inputFecha.addEventListener("change", aplicarFiltros);
+        inputFecha.addEventListener("input", aplicarFiltros);
+
+        btnLimpiar.addEventListener("click", () => {
+            clearTimeout(temporizadorBusqueda);
+            inputCliente.value = "";
+            inputFecha.value = "";
+            aplicarFiltros();
+        });
+
+        actualizarEnlaceNueva();
+    })();
+</script>

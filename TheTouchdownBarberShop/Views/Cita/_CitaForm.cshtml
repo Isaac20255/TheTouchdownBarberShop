@@ -1,0 +1,120 @@
+﻿@model TheTouchdownBarberShop.Application.DTOs.CitaDTO
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    var clientes = ViewBag.Clientes as List<SelectListItem> ?? new List<SelectListItem>();
+    var barberos = ViewBag.Barberos as List<SelectListItem> ?? new List<SelectListItem>();
+    var paquetes = ViewBag.Paquetes as List<SelectListItem> ?? new List<SelectListItem>();
+    var servicios = ViewBag.Servicios as List<SelectListItem> ?? new List<SelectListItem>();
+
+    var esEdicion = Model.IdCita > 0;
+    var estado = string.IsNullOrWhiteSpace(Model.Estado) ? "Pendiente" : Model.Estado;
+    var respuestas = Model.Respuestas.ToList();
+
+    string ClaseEstado(string e) => e switch
+    {
+        "Pendiente" => "bg-warning text-dark",
+        "Confirmada" => "bg-primary",
+        "Completada" => "bg-success",
+        "Cancelada" => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
+
+<input type="hidden" asp-for="IdCita" />
+<input type="hidden" asp-for="Estado" value="@estado" />
+
+<div class="row g-4">
+    <!-- Datos de la cita -->
+    <div class="col-lg-6">
+        <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm h-100" style="border-top: 3px solid #0d6efd !important;">
+            <div class="card-body">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-calendar-event me-2"></i>Datos de la cita</h5>
+
+                <div class="mb-3">
+                    <label asp-for="FechaHora" class="form-label fw-semibold">Fecha y hora</label>
+                    <input asp-for="FechaHora" type="datetime-local" class="form-control"
+                           min="@(esEdicion ? null : DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+                    <span asp-validation-for="FechaHora" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Sucursal</label>
+                    <input type="text" class="form-control" value="@ViewBag.Sucursal" readonly tabindex="-1" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="IdCliente" class="form-label fw-semibold">Cliente</label>
+                    <select asp-for="IdCliente" asp-items="clientes" class="form-select">
+                        <option value="0">-- Seleccione un cliente --</option>
+                    </select>
+                    <span asp-validation-for="IdCliente" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="IdBarbero" class="form-label fw-semibold">Barbero</label>
+                    <select asp-for="IdBarbero" asp-items="barberos" class="form-select">
+                        <option value="">-- Sin asignar --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="IdPaquete" class="form-label fw-semibold">Paquete (opcional)</label>
+                    <select asp-for="IdPaquete" asp-items="paquetes" class="form-select">
+                        <option value="">-- Sin paquete --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold d-block">Estado</label>
+                    <span class="badge px-3 py-2 @ClaseEstado(estado)">@estado</span>
+                </div>
+
+                <div class="mb-0">
+                    <label asp-for="Observaciones" class="form-label fw-semibold">Observaciones</label>
+                    <textarea asp-for="Observaciones" class="form-control" rows="3" maxlength="500"></textarea>
+                    <span asp-validation-for="Observaciones" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Servicios y preguntas -->
+    <div class="col-lg-6">
+        <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #dc3545 !important;">
+            <div class="card-body">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-scissors me-2"></i>Servicios</h5>
+
+                @foreach (var s in servicios)
+                {
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="IdsServicios"
+                               value="@s.Value" id="servicio_@s.Value" checked="@s.Selected" />
+                        <label class="form-check-label" for="servicio_@s.Value">@s.Text</label>
+                    </div>
+                }
+
+                <span asp-validation-for="IdsServicios" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm" style="border-top: 3px solid #198754 !important;">
+            <div class="card-body">
+                <h5 class="fw-bold text-dark mb-1"><i class="bi bi-question-circle me-2"></i>Preguntas al cliente</h5>
+                <p class="text-muted small mb-3">Debe responder como mínimo 3 preguntas.</p>
+
+                @for (var i = 0; i < respuestas.Count; i++)
+                {
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">@respuestas[i].Key</label>
+                        <input type="hidden" name="Respuestas[@i].Key" value="@respuestas[i].Key" />
+                        <input type="text" name="Respuestas[@i].Value" value="@respuestas[i].Value"
+                               class="form-control" maxlength="300" />
+                    </div>
+                }
+
+                <span asp-validation-for="Respuestas" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</div>

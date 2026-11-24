@@ -29,6 +29,11 @@
     };
 }
 
+@if (esStaff)
+{
+    @Html.AntiForgeryToken()
+}
+
 <!-- Header principal -->
 <div class="rounded-3 py-4 px-4 my-4 shadow-lg position-relative overflow-hidden"
      style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.9), rgba(33, 37, 41, 0.95)); border-bottom: 4px solid #dc3545;">
@@ -81,6 +86,22 @@
     </div>
 </div>
 
+<!-- Notificaciones de las acciones (registrar, actualizar, eliminar) -->
+@if (TempData["Success"] is string mensajeExito)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@mensajeExito
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+@if (TempData["Error"] is string mensajeError)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@mensajeError
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
 @if (!estaAutenticado)
 {
     <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm text-center p-5 mb-5"
@@ -99,6 +120,13 @@ else
 {
     @if (esStaff)
     {
+        <div class="d-flex justify-content-end mb-3">
+            <a id="btnNuevaCita" asp-action="Create" asp-route-idEncargado="@ViewBag.IdEncargado"
+               class="btn btn-danger fw-bold shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i>Nueva cita
+            </a>
+        </div>
+
         <!-- Filtros automáticos por cliente y/o fecha sin recargar página -->
         <div class="card bg-secondary bg-opacity-10 border-0 shadow-sm mb-4" style="border-top: 3px solid #0d6efd !important;">
             <div class="card-body">
@@ -146,11 +174,34 @@ else
 
                         @if (esStaff)
                         {
-                            <div class="card-footer bg-transparent border-0 p-2 pb-3">
+                            <div class="card-footer bg-transparent border-0 p-2 pb-3 d-flex gap-2">
                                 <a asp-action="Details" asp-route-id="@item.IdCita" asp-route-idEncargado="@ViewBag.IdEncargado"
-                                   class="btn btn-sm btn-outline-primary w-100" title="Detalles">
-                                    <i class="bi bi-eye-fill me-1"></i>Ver detalle
+                                   class="btn btn-sm btn-outline-primary flex-fill" title="Detalles">
+                                    <i class="bi bi-eye-fill"></i>
                                 </a>
+                                <a asp-action="Edit" asp-route-id="@item.IdCita" asp-route-idEncargado="@ViewBag.IdEncargado"
+                                   class="btn btn-sm btn-outline-secondary flex-fill" title="Editar">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+
+                                @if (item.Estado == "Completada")
+                                {
+                                    <span class="flex-fill" title="Una cita completada ya fue facturada y no se puede eliminar">
+                                        <button type="button" class="btn btn-sm btn-outline-danger w-100" disabled>
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <form asp-action="Delete" asp-route-id="@item.IdCita" asp-route-idEncargado="@ViewBag.IdEncargado"
+                                          method="post" class="flex-fill"
+                                          onsubmit="return confirm('¿Desea eliminar esta cita? Esta acción no se puede deshacer.');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100" title="Eliminar">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                }
                             </div>
                         }
                     </div>
@@ -183,8 +234,10 @@ else
             const inputCliente = document.getElementById("filtroCliente");
             const inputFecha = document.getElementById("filtroFecha");
             const btnLimpiar = document.getElementById("btnLimpiarFiltros");
+            const btnNuevaCita = document.getElementById("btnNuevaCita");
             const contenedor = document.getElementById("contenedorCitas");
             const subtituloSucursal = document.getElementById("subtituloSucursal");
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
 
             if (!inputCliente || !inputFecha || !contenedor) return;
 
@@ -205,6 +258,50 @@ else
                 const div = document.createElement("div");
                 div.textContent = texto ?? "";
                 return div.innerHTML;
+            }
+
+            function sufijoEncargado(idEnc) {
+                return idEnc ? `?idEncargado=${encodeURIComponent(idEnc)}` : "";
+            }
+
+            // Mantiene el enlace de "Nueva cita" apuntando al encargado seleccionado en el listado.
+            function actualizarEnlaceNuevaCita() {
+                if (!btnNuevaCita) return;
+                const idEnc = selectEncargado ? selectEncargado.value : "";
+                btnNuevaCita.href = `/Cita/Create${sufijoEncargado(idEnc)}`;
+            }
+
+            function construirPie(idCita, idEnc, estado) {
+                const sufijo = sufijoEncargado(idEnc);
+                const token = tokenInput ? tokenInput.value : "";
+
+                // Una cita completada ya fue facturada: no se ofrece la eliminación.
+                const botonEliminar = estado === "Completada"
+                    ? `<span class="flex-fill" title="Una cita completada ya fue facturada y no se puede eliminar">
+                           <button type="button" class="btn btn-sm btn-outline-danger w-100" disabled>
+                               <i class="bi bi-trash-fill"></i>
+                           </button>
+                       </span>`
+                    : `<form action="/Cita/Delete/${idCita}${sufijo}" method="post" class="flex-fill"
+                             onsubmit="return confirm('¿Desea eliminar esta cita? Esta acción no se puede deshacer.');">
+                           <input type="hidden" name="__RequestVerificationToken" value="${escaparHtml(token)}" />
+                           <button type="submit" class="btn btn-sm btn-outline-danger w-100" title="Eliminar">
+                               <i class="bi bi-trash-fill"></i>
+                           </button>
+                       </form>`;
+
+                return `
+                    <div class="card-footer bg-transparent border-0 p-2 pb-3 d-flex gap-2">
+                        <a href="/Cita/Details/${idCita}${sufijo}"
+                           class="btn btn-sm btn-outline-primary flex-fill" title="Detalles">
+                            <i class="bi bi-eye-fill"></i>
+                        </a>
+                        <a href="/Cita/Edit/${idCita}${sufijo}"
+                           class="btn btn-sm btn-outline-secondary flex-fill" title="Editar">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        ${botonEliminar}
+                    </div>`;
             }
 
             function renderizarCitas(citas) {
@@ -229,9 +326,6 @@ else
 
                 contenedor.innerHTML = citas.map(cita => {
                     const estilo = obtenerEstilo(cita.estado);
-                    const urlDetalle = idEnc
-                        ? `/Cita/Details/${cita.idCita}?idEncargado=${encodeURIComponent(idEnc)}`
-                        : `/Cita/Details/${cita.idCita}`;
 
                     return `
                         <div class="col">
@@ -249,12 +343,7 @@ else
                                         <span class="badge px-3 py-2 ${estilo.badge}">${escaparHtml(cita.estado)}</span>
                                     </div>
                                 </div>
-                                <div class="card-footer bg-transparent border-0 p-2 pb-3">
-                                    <a href="${urlDetalle}"
-                                       class="btn btn-sm btn-outline-primary w-100" title="Detalles">
-                                        <i class="bi bi-eye-fill me-1"></i>Ver detalle
-                                    </a>
-                                </div>
+                                ${construirPie(cita.idCita, idEnc, cita.estado)}
                             </div>
                         </div>`;
                 }).join("");
@@ -284,7 +373,10 @@ else
             }
 
             if (selectEncargado) {
-                selectEncargado.addEventListener("change", aplicarFiltros);
+                selectEncargado.addEventListener("change", () => {
+                    actualizarEnlaceNuevaCita();
+                    aplicarFiltros();
+                });
             }
 
             inputCliente.addEventListener("input", () => programarFiltro(200));
@@ -307,6 +399,8 @@ else
                     aplicarFiltros();
                 });
             }
+
+            actualizarEnlaceNuevaCita();
         })();
     </script>
 }

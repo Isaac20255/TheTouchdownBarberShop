@@ -8,6 +8,7 @@ namespace TheTouchdownBarberShop.Application.Profiles
     {
         public CitaProfile()
         {
+            // Entidad -> DTO (listado, detalle y precarga de edición)
             CreateMap<Citas, CitaDTO>()
                 .ForMember(d => d.NombreCliente, o => o.MapFrom(s =>
                     s.IdClienteNavigation != null ? s.IdClienteNavigation.Nombre : "Cliente no disponible"))
@@ -27,7 +28,25 @@ namespace TheTouchdownBarberShop.Application.Profiles
                 .ForMember(d => d.Preguntas, o => o.MapFrom(s =>
                     s.CitaPreguntas != null
                         ? s.CitaPreguntas.Select(p => $"{p.Pregunta ?? "Pregunta"}: {p.Respuesta ?? "Sin respuesta"}").ToList()
-                        : new List<string>()));
+                        : new List<string>()))
+                .ForMember(d => d.IdsServicios, o => o.MapFrom(s =>
+                    s.CitaServicios != null
+                        ? s.CitaServicios.Select(cs => cs.IdServicio).ToList()
+                        : new List<int>()))
+                .ForMember(d => d.Respuestas, o => o.MapFrom(s =>
+                    s.CitaPreguntas != null
+                        ? s.CitaPreguntas
+                            .GroupBy(p => p.Pregunta ?? "")
+                            .ToDictionary(g => g.Key, g => g.First().Respuesta)
+                        : new Dictionary<string, string?>()));
+
+            // DTO -> entidad (solo escalares; los hijos y los campos del servidor los arma el servicio)
+            CreateMap<CitaDTO, Citas>()
+                .ForMember(d => d.CitaServicios, o => o.Ignore())
+                .ForMember(d => d.CitaPreguntas, o => o.Ignore())
+                .ForMember(d => d.IdSucursal, o => o.Ignore())
+                .ForMember(d => d.Estado, o => o.Ignore())
+                .ForMember(d => d.FechaCreacion, o => o.Ignore());
         }
     }
 }

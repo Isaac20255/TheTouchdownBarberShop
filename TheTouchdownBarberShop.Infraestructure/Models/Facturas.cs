@@ -13,6 +13,8 @@ public partial class Facturas
 
     public int IdSucursal { get; set; }
 
+    public int? IdEncargado { get; set; }
+
     public DateTime FechaEmision { get; set; }
 
     public decimal Subtotal { get; set; }
@@ -21,7 +23,9 @@ public partial class Facturas
 
     public decimal Total { get; set; }
 
-    public int IdMetodoPago { get; set; }
+    public int? IdMetodoPago { get; set; }
+
+    public string Estado { get; set; } = "Facturado";
 
     public virtual ICollection<FacturaProductos> FacturaProductos { get; set; } = new List<FacturaProductos>();
 
@@ -31,7 +35,9 @@ public partial class Facturas
 
     public virtual Usuario IdClienteNavigation { get; set; } = null!;
 
-    public virtual MetodosPago IdMetodoPagoNavigation { get; set; } = null!;
+    public virtual Usuario? IdEncargadoNavigation { get; set; }
+
+    public virtual MetodosPago? IdMetodoPagoNavigation { get; set; }
 
     public virtual Sucursal IdSucursalNavigation { get; set; } = null!;
 }
